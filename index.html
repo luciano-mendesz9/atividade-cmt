@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <meta name="description" content="Atividade prática de robótica com checklist interativo para construir um painel de LEDs com potenciômetro no Tinkercad." />
+  <title>Missão Robótica | Painel de Iluminação</title>
+  <style>
+    :root {
+      --navy: #111b34;
+      --blue: #3856e8;
+      --blue-dark: #253fc7;
+      --mint: #08a997;
+      --ink: #202b42;
+      --subtle: #627089;
+      --line: #dfe5f1;
+      --paper: #ffffff;
+      --surface: #f5f7fc;
+      --light-blue: #edf1ff;
+      --shadow: 0 15px 40px rgba(27, 43, 84, .075);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; color: var(--ink); background: var(--surface);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+    button, input, textarea { font: inherit; }
+    a { color: inherit; }
+    .topbar { background: var(--navy); color: #fff; }
+    .top-inner { max-width: 1200px; margin: auto; padding: 16px 26px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-size: .92rem; font-weight: 850; letter-spacing: .055em; }
+    .brand-icon { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 11px; background: rgba(255,255,255,.12); font-size: 21px; }
+    .top-tag { color: #c2cceb; font-size: .84rem; }
+    .shell { max-width: 1200px; padding: 32px 26px 68px; margin: 0 auto; }
+    .hero {
+      background: linear-gradient(115deg, #213ca6 0%, #3959ec 63%, #6379ff 100%);
+      border-radius: 24px; overflow: hidden; color: white; padding: clamp(24px, 5vw, 46px);
+      position: relative; box-shadow: 0 18px 45px rgba(48,74,191,.16);
+    }
+    .hero:after { content: ""; position: absolute; width: 340px; height: 340px; right: -70px; top: -130px; border: 58px solid rgba(255,255,255,.085); border-radius: 50%; pointer-events: none; }
+    .eyebrow { font-size: .75rem; font-weight: 850; letter-spacing: .12em; text-transform: uppercase; }
+    .hero .eyebrow { color: #d7e0ff; }
+    h1 { font-size: clamp(2rem, 4.2vw, 3.25rem); max-width: 680px; letter-spacing: -.045em; line-height: 1.1; margin: 11px 0 15px; }
+    .hero p { max-width: 690px; margin: 0; font-size: 1.05rem; color: #e8edff; }
+    .hero-chips { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 24px; }
+    .hero-chip { background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.23); padding: 7px 12px; border-radius: 100px; font-size: .83rem; font-weight: 720; }
+    .columns { display: grid; grid-template-columns: minmax(0, 1fr) 310px; align-items: start; gap: 25px; margin-top: 27px; }
+    .main { min-width: 0; }
+    .aside { position: sticky; top: 20px; display: grid; gap: 18px; }
+    .card, .stage { background: var(--paper); border: 1px solid var(--line); border-radius: 19px; box-shadow: var(--shadow); }
+    .card { padding: 23px; }
+    .card h2, .card h3 { margin: 0 0 9px; font-size: 1.05rem; letter-spacing: -.02em; }
+    .card p { margin: 0; color: var(--subtle); font-size: .92rem; }
+    .mission { margin-bottom: 20px; border-left: 4px solid var(--blue); }
+    .mission strong { color: var(--ink); }
+    .mission p + p { margin-top: 10px; }
+    .mini-label { color: var(--subtle); display: block; font-weight: 750; font-size: .77rem; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+    .student-name { width: 100%; border: 1px solid #cfd8ea; border-radius: 11px; padding: 11px 13px; color: var(--ink); outline: none; background: #fff; }
+    .student-name:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(56,86,232,.12); }
+    .progress-wrap { display: flex; align-items: center; gap: 17px; }
+    .progress-ring { position: relative; --progress: 0%; width: 98px; height: 98px; flex: none; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--mint) var(--progress), #e5eaf5 0); }
+    .progress-ring:before { content: ""; position: absolute; width: 76px; height: 76px; border-radius: 50%; background: #fff; }
+    .progress-ring span { position: relative; z-index: 1; font-size: 1.5rem; font-weight: 900; color: var(--navy); }
+    .progress-copy strong { font-size: 1.14rem; display: block; }
+    .progress-copy small { font-size: .8rem; color: var(--subtle); }
+    .progress-track { background: #e6eaf4; height: 8px; border-radius: 100px; margin-top: 20px; overflow: hidden; }
+    .progress-fill { height: 100%; width: 0; border-radius: inherit; background: var(--mint); transition: width .25s ease; }
+    .section-caption { margin: 27px 0 15px; }
+    .section-caption h2 { font-size: 1.2rem; margin: 0 0 3px; }
+    .section-caption p { color: var(--subtle); margin: 0; font-size: .88rem; }
+    .stage { margin-bottom: 15px; overflow: hidden; transition: border-color .2s ease; }
+    .stage[open] { border-color: #d3dcf6; }
+    .stage.all-done { border-color: #afe0d5; }
+    summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 13px; padding: 20px; }
+    summary::-webkit-details-marker { display: none; }
+    summary:focus-visible { outline: 3px solid #a5b6ff; outline-offset: -3px; border-radius: 18px; }
+    .stage-icon { height: 48px; width: 48px; border-radius: 15px; background: #eef1ff; display: grid; place-items: center; font-size: 22px; flex: none; }
+    .stage.all-done .stage-icon { background: #e1f7ef; }
+    .stage-title { flex: 1; min-width: 0; }
+    .stage-index { font-size: .72rem; color: var(--blue); font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
+    .stage-title h3 { font-size: 1.09rem; margin: 3px 0 2px; line-height: 1.3; }
+    .stage-title small { color: var(--subtle); font-size: .78rem; }
+    .stage-right { display: flex; align-items: center; gap: 9px; flex: none; }
+    .stage-count { white-space: nowrap; background: var(--light-blue); color: #3550b5; font-size: .75rem; padding: 5px 9px; font-weight: 800; border-radius: 90px; }
+    .stage.all-done .stage-count { color: #087e67; background: #e1f7ef; }
+    .chevron { width: 9px; height: 9px; border-bottom: 2px solid #6b7890; border-right: 2px solid #6b7890; transform: rotate(45deg); transition: transform .15s ease; margin: -3px 3px 0; }
+    details[open] .chevron { transform: rotate(225deg); margin-top: 4px; }
+    .stage-body { padding: 0 20px 20px; border-top: 1px solid #eff1f7; }
+    .stage-note { margin: 14px 0; padding: 12px 14px; background: #f1f5ff; border-radius: 11px; color: #3b4f7d; font-size: .86rem; }
+    .stage-note.warning { background: #fff7e9; color: #795621; }
+    .task-list { display: grid; gap: 8px; padding-top: 15px; }
+    .task { cursor: pointer; display: grid; grid-template-columns: 25px minmax(0, 1fr); gap: 12px; align-items: start; background: #fafbfe; padding: 13px 12px; border: 1px solid #edf0f6; border-radius: 12px; transition: background .2s ease, border-color .2s ease; }
+    .task:hover { border-color: #bfcdf9; background: #f5f7ff; }
+    .task:has(input:checked) { background: #f0fbf7; border-color: #bce7dc; }
+    .task input { margin: 3px 0 0; width: 20px; height: 20px; accent-color: var(--mint); cursor: pointer; }
+    .task span { color: #33415a; font-size: .925rem; }
+    .task:has(input:checked) span { color: #6a7b78; text-decoration: line-through; text-decoration-color: #a1b0a9; }
+    .step-number { font-weight: 850; color: var(--blue); margin-right: 5px; }
+    .question { margin: 16px 0 0; }
+    .question label { font-size: .9rem; display: block; font-weight: 700; margin-bottom: 7px; }
+    textarea { width: 100%; min-height: 75px; resize: vertical; border: 1px solid #cfd8ea; border-radius: 11px; outline: none; background: #fff; padding: 11px 12px; color: var(--ink); font-size: .9rem; }
+    .materials { padding: 0; margin: 13px 0 0; list-style: none; }
+    .materials li { display: flex; align-items: center; gap: 8px; font-size: .89rem; padding: 7px 0; border-bottom: 1px solid #f0f2f7; }
+    .materials li:last-child { border: 0; }
+    .material-dot { background: #eef1ff; color: var(--blue); font-weight: 850; width: 27px; height: 27px; border-radius: 8px; display: grid; place-items: center; flex: none; font-size: .81rem; }
+    .actions { display: grid; gap: 9px; }
+    .btn { border: 0; border-radius: 11px; padding: 11px 13px; cursor: pointer; font-weight: 780; font-size: .87rem; width: 100%; text-align: center; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: transform .1s ease, background .15s ease; }
+    .btn:active { transform: translateY(1px); }
+    .btn.primary { background: var(--blue); color: #fff; }
+    .btn.primary:hover { background: var(--blue-dark); }
+    .btn.secondary { background: #eef1f9; color: #344360; }
+    .btn.secondary:hover { background: #e3e8f3; }
+    .btn.tertiary { background: transparent; color: #69768c; border: 1px solid #e1e5ef; }
+    .btn.tertiary:hover { background: #f9fafc; }
+    .finish { margin-top: 17px; background: #e5f8f3; border: 1px solid #bae7dc; color: #176957; padding: 19px; border-radius: 15px; display: none; }
+    .finish.visible { display: block; }
+    .finish strong { display: block; font-size: 1.1rem; }
+    .finish p { margin: 4px 0 0; font-size: .9rem; }
+    .bonus { background: linear-gradient(130deg,#fffdf5,#fff9eb); border-color: #eadbba; }
+    .bonus .stage-icon { background: #fff0c9; }
+    .note-bottom { margin-top: 12px; font-size: .83rem; color: #64718a; }
+    footer { color: #8b95a9; text-align: center; font-size: .78rem; margin-top: 35px; }
+    @media (max-width: 880px) {
+      .columns { grid-template-columns: 1fr; }
+      .aside { position: static; grid-row: 1; grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .aside .card:nth-child(2) { grid-column: span 2; }
+      .aside .card:nth-child(3) { grid-column: span 2; }
+      .aside .card:nth-child(4) { grid-column: span 2; }
+      .card { padding: 19px; }
+    }
+    @media (max-width: 550px) {
+      .shell { padding: 16px 13px 40px; }
+      .top-inner { padding: 13px 16px; }
+      .top-tag { display: none; }
+      .hero { border-radius: 17px; padding: 24px 20px; }
+      .hero p { font-size: .96rem; }
+      .hero:after { right: -240px; }
+      .aside { grid-template-columns: 1fr; }
+      .aside .card:nth-child(n) { grid-column: auto; }
+      .stage-title h3 { font-size: .97rem; }
+      .stage-icon { width: 39px; height: 39px; font-size: 20px; }
+      .stage-count { font-size: .7rem; padding: 4px 7px; }
+      summary { padding: 15px 11px; gap: 9px; }
+      .stage-body { padding: 0 11px 14px; }
+      .task { padding: 11px 9px; gap: 9px; }
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .topbar, .actions, .chevron, footer { display: none !important; }
+      .shell { max-width: none; padding: 0; }
+      .hero { box-shadow: none; border-radius: 0; padding: 18px 22px; color: #000; background: #eff2ff; }
+      .hero p, .hero .eyebrow { color: #333; }
+      .hero-chip { color: #333; border-color: #bbb; }
+      .columns { display: block; margin-top: 14px; }
+      .aside { position: static; display: block; }
+      .aside .card { margin-bottom: 10px; }
+      .card, .stage { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
+      .stage { margin-bottom: 9px; }
+      .stage:not([open]) > .stage-body { display: block !important; }
+      details > .stage-body { display: block !important; }
+      .task:has(input:checked) span { color: #333; text-decoration: none; }
+      .finish { display: none !important; }
+      textarea { min-height: 50px; }
+      .main .mission { margin-top: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="top-inner">
+      <div class="brand"><span class="brand-icon" aria-hidden="true">⚡</span> LAB ROBÓTICA</div>
+      <div class="top-tag">Desafio interativo · Tinkercad</div>
+    </div>
+  </header>
+  <div class="shell">
+    <section class="hero" aria-labelledby="main-title">
+      <span class="eyebrow">Atividade prática de robótica</span>
+      <h1 id="main-title">Missão: Painel de Iluminação Inteligente</h1>
+      <p>Leia cada instrução, monte o circuito no Tinkercad e marque a tarefa quando concluí-la. Sua missão é transformar um desafio escrito em um circuito que funcione.</p>
+      <div class="hero-chips">
+        <span class="hero-chip">💡 2 LEDs</span>
+        <span class="hero-chip">🎛️ 1 potenciômetro</span>
+        <span class="hero-chip">🔌 Fonte de 5 V</span>
+        <span class="hero-chip">✅ Passo a passo</span>
+      </div>
+    </section>
+
+    <div class="columns">
+      <main class="main">
+        <section class="card mission">
+          <h2>🎯 Sua missão</h2>
+          <p>Uma empresa contratou você para criar um pequeno painel eletrônico com <strong>duas luzes de sinalização</strong>. A luz <strong>verde</strong> deve permanecer acesa enquanto o sistema estiver ligado. A luz <strong>vermelha</strong> deve ter seu brilho ajustado por um botão giratório.</p>
+          <p><strong>Regra do desafio:</strong> você não receberá um esquema pronto. Leia com atenção, interprete as orientações e descubra como conectar os componentes.</p>
+        </section>
+
+        <div class="section-caption">
+          <h2>📋 Etapas da missão</h2>
+          <p>Marque cada item assim que realizar a ação no Tinkercad. Você pode abrir ou fechar as etapas.</p>
+        </div>
+
+        <details class="stage" data-stage="1" open>
+          <summary><span class="stage-icon">🛠️</span><span class="stage-title"><span class="stage-index">Etapa 01</span><h3>Preparar o ambiente</h3><small>Comece organizando sua bancada virtual.</small></span><span class="stage-right"><span class="stage-count" aria-live="polite">0/4</span><i class="chevron" aria-hidden="true"></i></span></summary>
+          <div class="stage-body"><div class="task-list">
+            <label class="task"><input type="checkbox" data-task="1" /><span><b class="step-number">01.</b> Acesse o Tinkercad, abra a área de <strong>Circuitos</strong> e crie um novo circuito.</span></label>
+            <label class="task"><input type="checkbox" data-task="2" /><span><b class="step-number">02.</b> Adicione uma <strong>protoboard</strong> ao espaço de trabalho.</span></label>
+            <label class="task"><input type="checkbox" data-task="3" /><span><b class="step-number">03.</b> Adicione uma fonte de alimentação próxima à protoboard e ajuste a tensão para <strong>5 V</strong>.</span></label>
+            <label class="task"><input type="checkbox" data-task="4" /><span><b class="step-number">04.</b> Ligue o positivo (+) da fonte ao barramento positivo da protoboard e o negativo (−) ao barramento negativo.</span></label>
+          </div><p class="stage-note">💡 Dica: verifique quais furos da protoboard estão eletricamente conectados. Alguns barramentos são divididos e precisam de ligação adicional.</p></div>
+        </details>
+
+        <details class="stage" data-stage="2" open>
+          <summary><span class="stage-icon">🟢</span><span class="stage-title"><span class="stage-index">Etapa 02</span><h3>Montar a luz verde</h3><small>O indicador de funcionamento do sistema.</small></span><span class="stage-right"><span class="stage-count" aria-live="polite">0/4</span><i class="chevron" aria-hidden="true"></i></span></summary>
+          <div class="stage-body"><div class="task-list">
+            <label class="task"><input type="checkbox" data-task="5" /><span><b class="step-number">05.</b> Coloque o <strong>LED verde</strong> na protoboard, com os dois terminais em pontos que não estejam conectados entre si.</span></label>
+            <label class="task"><input type="checkbox" data-task="6" /><span><b class="step-number">06.</b> Identifique o ânodo (+) e o cátodo (−) do LED. No componente usual, a <strong>perna longa é o ânodo</strong> e a curta é o cátodo.</span></label>
+            <label class="task"><input type="checkbox" data-task="7" /><span><b class="step-number">07.</b> Ligue um <strong>resistor de 330 Ω</strong> entre o barramento positivo (+) e o ânodo do LED verde.</span></label>
+            <label class="task"><input type="checkbox" data-task="8" /><span><b class="step-number">08.</b> Ligue o cátodo do LED verde ao barramento negativo (−).</span></label>
+          </div><p class="stage-note warning">⚠️ Nunca conecte um LED diretamente à fonte sem um resistor limitador de corrente.</p></div>
+        </details>
+
+        <details class="stage" data-stage="3" open>
+          <summary><span class="stage-icon">🎛️</span><span class="stage-title"><span class="stage-index">Etapa 03</span><h3>Conhecer o potenciômetro</h3><small>Aprenda a utilizar os três terminais.</small></span><span class="stage-right"><span class="stage-count" aria-live="polite">0/5</span><i class="chevron" aria-hidden="true"></i></span></summary>
+          <div class="stage-body"><div class="task-list">
+            <label class="task"><input type="checkbox" data-task="9" /><span><b class="step-number">09.</b> Procure <strong>Potentiometer (Potenciômetro)</strong> na lista de componentes e coloque um na área do circuito.</span></label>
+            <label class="task"><input type="checkbox" data-task="10" /><span><b class="step-number">10.</b> Selecione o potenciômetro e ajuste seu valor para <strong>1 kΩ (1.000 Ω)</strong>.</span></label>
+            <label class="task"><input type="checkbox" data-task="11" /><span><b class="step-number">11.</b> Observe os <strong>três terminais</strong>. Os dois laterais são as extremidades da resistência interna.</span></label>
+            <label class="task"><input type="checkbox" data-task="12" /><span><b class="step-number">12.</b> Localize o <strong>terminal central</strong>, chamado de cursor ou <em>wiper</em>. Ele fornece uma tensão variável quando o botão é girado e os terminais laterais estão ligados à alimentação.</span></label>
+            <label class="task"><input type="checkbox" data-task="13" /><span><b class="step-number">13.</b> Posicione o potenciômetro onde os três terminais possam ser ligados por fios sem criar contatos acidentais entre eles.</span></label>
+          </div><p class="stage-note">🔎 Pense no potenciômetro como um controle ajustável: o terminal central é o ponto de saída usado para controlar o segundo LED.</p></div>
+        </details>
+
+        <details class="stage" data-stage="4" open>
+          <summary><span class="stage-icon">🔴</span><span class="stage-title"><span class="stage-index">Etapa 04</span><h3>Montar a luz vermelha</h3><small>Crie a iluminação com brilho ajustável.</small></span><span class="stage-right"><span class="stage-count" aria-live="polite">0/6</span><i class="chevron" aria-hidden="true"></i></span></summary>
+          <div class="stage-body"><div class="task-list">
+            <label class="task"><input type="checkbox" data-task="14" /><span><b class="step-number">14.</b> Coloque o <strong>LED vermelho</strong> em outra região da protoboard, com as duas pernas em pontos não conectados entre si.</span></label>
+            <label class="task"><input type="checkbox" data-task="15" /><span><b class="step-number">15.</b> Ligue <strong>um terminal lateral</strong> do potenciômetro ao barramento positivo (+).</span></label>
+            <label class="task"><input type="checkbox" data-task="16" /><span><b class="step-number">16.</b> Ligue o <strong>outro terminal lateral</strong> do potenciômetro ao barramento negativo (−).</span></label>
+            <label class="task"><input type="checkbox" data-task="17" /><span><b class="step-number">17.</b> Ligue o <strong>terminal central</strong> do potenciômetro a uma ponta do segundo resistor de <strong>330 Ω</strong>.</span></label>
+            <label class="task"><input type="checkbox" data-task="18" /><span><b class="step-number">18.</b> Ligue a outra ponta desse resistor ao <strong>ânodo (+) do LED vermelho</strong>.</span></label>
+            <label class="task"><input type="checkbox" data-task="19" /><span><b class="step-number">19.</b> Ligue o <strong>cátodo (−) do LED vermelho</strong> ao barramento negativo (−).</span></label>
+          </div><p class="stage-note warning">⚠️ O resistor de 330 Ω deve ficar em série com o LED vermelho. Não faça uma ligação direta entre o terminal central do potenciômetro e o LED sem o resistor.</p></div>
+        </details>
+
+        <details class="stage" data-stage="5" open>
+          <summary><span class="stage-icon">🧪</span><span class="stage-title"><span class="stage-index">Etapa 05</span><h3>Testar e corrigir</h3><small>Verifique os comportamentos pedidos.</small></span><span class="stage-right"><span class="stage-count" aria-live="polite">0/6</span><i class="chevron" aria-hidden="true"></i></span></summary>
+          <div class="stage-body"><div class="task-list">
+            <label class="task"><input type="checkbox" data-task="20" /><span><b class="step-number">20.</b> Clique em <strong>Iniciar simulação</strong> no Tinkercad.</span></label>
+            <label class="task"><input type="checkbox" data-task="21" /><span><b class="step-number">21.</b> Verifique se o <strong>LED verde permanece aceso</strong> enquanto a fonte está ligada.</span></label>
+            <label class="task"><input type="checkbox" data-task="22" /><span><b class="step-number">22.</b> <strong>Gire lentamente o potenciômetro</strong> e observe se o brilho do LED vermelho muda.</span></label>
+            <label class="task"><input type="checkbox" data-task="23" /><span><b class="step-number">23.</b> Verifique se o LED vermelho consegue <strong>ficar apagado ou bem fraco</strong> em uma posição e mais brilhante em outra.</span></label>
+            <label class="task"><input type="checkbox" data-task="24" /><span><b class="step-number">24.</b> Observe se o <strong>LED verde continua aceso</strong> durante o ajuste do potenciômetro.</span></label>
+            <label class="task"><input type="checkbox" data-task="25" /><span><b class="step-number">25.</b> Se algo não funcionar, <strong>pare a simulação</strong>, confira os polos dos LEDs, os resistores e os fios, corrija e teste novamente.</span></label>
+          </div><p class="stage-note">🏁 Critério de sucesso: verde aceso o tempo todo; vermelho com brilho ajustável; o potenciômetro não deve interferir na luz verde.</p></div>
+        </details>
+
+        <details class="stage" data-stage="6" open>
+          <summary><span class="stage-icon">✍️</span><span class="stage-title"><span class="stage-index">Etapa 06</span><h3>Responder e refletir</h3><small>Registre o que você descobriu.</small></span><span class="stage-right"><span class="stage-count" aria-live="polite">0/4</span><i class="chevron" aria-hidden="true"></i></span></summary>
+          <div class="stage-body">
+            <div class="question"><label for="answer1">1. Qual é a função dos resistores utilizados no circuito?</label><textarea id="answer1" data-answer="1" placeholder="Escreva sua resposta aqui..."></textarea><label class="task"><input type="checkbox" data-task="26" /><span>Respondi à pergunta 1.</span></label></div>
+            <div class="question"><label for="answer2">2. O que acontece com o LED vermelho quando você gira o potenciômetro?</label><textarea id="answer2" data-answer="2" placeholder="Escreva sua resposta aqui..."></textarea><label class="task"><input type="checkbox" data-task="27" /><span>Respondi à pergunta 2.</span></label></div>
+            <div class="question"><label for="answer3">3. Por que o LED verde continua aceso mesmo quando o potenciômetro é ajustado?</label><textarea id="answer3" data-answer="3" placeholder="Escreva sua resposta aqui..."></textarea><label class="task"><input type="checkbox" data-task="28" /><span>Respondi à pergunta 3.</span></label></div>
+            <div class="question"><label for="answer4">4. Qual foi sua maior dificuldade ao interpretar e transformar as instruções escritas em um circuito?</label><textarea id="answer4" data-answer="4" placeholder="Escreva sua resposta aqui..."></textarea><label class="task"><input type="checkbox" data-task="29" /><span>Respondi à pergunta 4.</span></label></div>
+          </div>
+        </details>
+
+        <details class="stage bonus" data-stage="bonus">
+          <summary><span class="stage-icon">🏅</span><span class="stage-title"><span class="stage-index">Desafio extra · opcional</span><h3>Inverter o controle</h3><small>Para quem já concluiu a montagem.</small></span><span class="stage-right"><span class="stage-count" aria-live="polite">Extra</span><i class="chevron" aria-hidden="true"></i></span></summary>
+          <div class="stage-body"><p class="stage-note">Sem alterar o LED verde, tente inverter o sentido do controle do brilho vermelho. Dica: analise o que muda quando você troca as conexões dos dois terminais laterais do potenciômetro.</p><div class="task-list"><label class="task"><input type="checkbox" data-task="bonus" /><span>Consegui inverter o sentido do controle e testar a mudança na simulação.</span></label></div></div>
+        </details>
+
+        <div class="finish" id="finish" role="status" aria-live="polite"><strong>🎉 Missão concluída!</strong><p>Você marcou todas as tarefas obrigatórias. Mostre seu circuito funcionando ao professor e explique como o potenciômetro controla o LED vermelho.</p></div>
+        <p class="note-bottom">Suas marcações, nome e respostas são salvos automaticamente neste navegador, neste dispositivo. Para entregar as respostas, use a função de impressão ou siga a orientação do professor.</p>
+      </main>
+
+      <aside class="aside" aria-label="Painel da atividade">
+        <section class="card">
+          <label class="mini-label" for="studentName">Nome do(a) estudante</label>
+          <input class="student-name" id="studentName" type="text" autocomplete="name" placeholder="Digite seu nome..." />
+        </section>
+        <section class="card" aria-labelledby="progress-title">
+          <h2 id="progress-title">Seu progresso</h2>
+          <div class="progress-wrap"><div class="progress-ring" id="progressRing" role="img" aria-label="Progresso de 0 por cento"><span id="percentage">0%</span></div><div class="progress-copy"><strong id="doneCount">0 de 29</strong><small>tarefas concluídas</small></div></div>
+          <div class="progress-track" role="progressbar" aria-label="Tarefas concluídas" aria-valuemin="0" aria-valuemax="29" aria-valuenow="0" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+        </section>
+        <section class="card">
+          <h3>📦 Materiais necessários</h3>
+          <ul class="materials">
+            <li><span class="material-dot">1</span> Protoboard</li>
+            <li><span class="material-dot">1</span> LED verde</li>
+            <li><span class="material-dot">1</span> LED vermelho</li>
+            <li><span class="material-dot">2</span> Resistores de 330 Ω</li>
+            <li><span class="material-dot">1</span> Potenciômetro de 1 kΩ</li>
+            <li><span class="material-dot">1</span> Fonte de 5 V</li>
+            <li><span class="material-dot">+</span> Fios para conexões</li>
+          </ul>
+        </section>
+        <section class="card actions">
+          <a class="btn primary" href="https://www.tinkercad.com/circuits" target="_blank" rel="noopener noreferrer">↗ Abrir Tinkercad</a>
+          <button class="btn secondary" id="printBtn" type="button">🖨️ Imprimir / salvar PDF</button>
+          <button class="btn tertiary" id="resetBtn" type="button">↺ Reiniciar atividade</button>
+        </section>
+      </aside>
+    </div>
+    <footer>LAB ROBÓTICA · Leia, interprete, monte, teste e descubra.</footer>
+  </div>
+  <script>
+    (() => {
+      'use strict';
+      const STORAGE_KEY = 'robotica-tinkercad-checklist-v1';
+      const requiredBoxes = [...document.querySelectorAll('input[data-task]:not([data-task="bonus"])')];
+      const allBoxes = [...document.querySelectorAll('input[data-task]')];
+      const stages = [...document.querySelectorAll('.stage')];
+      const answers = [...document.querySelectorAll('textarea[data-answer]')];
+      const nameInput = document.getElementById('studentName');
+      const total = requiredBoxes.length;
+
+      function save() {
+        const data = {
+          checks: Object.fromEntries(allBoxes.map(box => [box.dataset.task, box.checked])),
+          answers: Object.fromEntries(answers.map(area => [area.dataset.answer, area.value])),
+          name: nameInput.value
+        };
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (_) {}
+      }
+      function load() {
+        try {
+          const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+          allBoxes.forEach(box => { box.checked = Boolean(data.checks?.[box.dataset.task]); });
+          answers.forEach(area => { area.value = data.answers?.[area.dataset.answer] || ''; });
+          nameInput.value = data.name || '';
+        } catch (_) {}
+      }
+      function updateProgress() {
+        const done = requiredBoxes.filter(box => box.checked).length;
+        const pct = Math.round((done / total) * 100);
+        document.getElementById('percentage').textContent = `${pct}%`;
+        document.getElementById('doneCount').textContent = `${done} de ${total}`;
+        document.getElementById('progressRing').style.setProperty('--progress', `${pct}%`);
+        document.getElementById('progressRing').setAttribute('aria-label', `Progresso de ${pct} por cento`);
+        const bar = document.getElementById('progressBar');
+        bar.setAttribute('aria-valuenow', String(done));
+        bar.setAttribute('aria-valuemax', String(total));
+        document.getElementById('progressFill').style.width = `${pct}%`;
+        stages.forEach(stage => {
+          const boxes = [...stage.querySelectorAll('input[data-task]')];
+          const count = boxes.filter(box => box.checked).length;
+          const finished = boxes.length > 0 && count === boxes.length;
+          stage.classList.toggle('all-done', finished);
+          const label = stage.querySelector('.stage-count');
+          if (label && stage.dataset.stage !== 'bonus') label.textContent = `${count}/${boxes.length}`;
+          if (label && stage.dataset.stage === 'bonus') label.textContent = finished ? 'Concluído ✓' : 'Extra';
+        });
+        document.getElementById('finish').classList.toggle('visible', done === total);
+      }
+      allBoxes.forEach(box => box.addEventListener('change', () => { updateProgress(); save(); }));
+      answers.forEach(area => area.addEventListener('input', save));
+      nameInput.addEventListener('input', save);
+      document.getElementById('printBtn').addEventListener('click', () => {
+        stages.forEach(stage => stage.open = true);
+        window.print();
+      });
+      document.getElementById('resetBtn').addEventListener('click', () => {
+        if (!window.confirm('Deseja apagar todas as marcações, respostas e o nome neste dispositivo?')) return;
+        allBoxes.forEach(box => box.checked = false);
+        answers.forEach(area => area.value = '');
+        nameInput.value = '';
+        updateProgress();
+        save();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+      load();
+      updateProgress();
+    })();
+  </script>
+</body>
+</html>
