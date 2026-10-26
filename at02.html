@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111b34">
+  <meta name="description" content="Atividade interativa de robótica: programe quatro LEDs no Arduino com Tinkercad, seguindo um checklist por etapas.">
+  <title>Missão Robótica 02 | Show de Luzes com Código</title>
+  <style>
+    :root { --navy:#111b34;--indigo:#425ce4;--indigo-dark:#3048c2;--aqua:#00b79d;--ink:#1f2943;--muted:#65718b;--line:#e0e5f0;--paper:#fff;--bg:#f4f6fb;--lavender:#eef1ff;--shadow:0 15px 40px rgba(26,42,83,.065); }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.55; }
+    button,input,textarea { font:inherit; }
+    a { color:inherit; }
+    button { cursor:pointer; }
+    :focus-visible { outline:3px solid #7e96ff;outline-offset:2px; }
+    .topbar { background:var(--navy);color:#fff; }
+    .top-inner { max-width:1200px;margin:auto;padding:15px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px; }
+    .brand { display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.055em;font-size:.9rem; }
+    .brand-logo { width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.13);font-size:20px; }
+    .top-note { font-size:.82rem;color:#c8d1ed; }
+    .container { max-width:1200px;margin:0 auto;padding:30px 24px 62px; }
+    .hero { position:relative;overflow:hidden;border-radius:23px;background:linear-gradient(117deg,#273c9d 0%,#3d59dd 61%,#687af7 100%);color:#fff;padding:clamp(26px,5vw,44px);box-shadow:0 17px 42px rgba(48,71,172,.15); }
+    .hero:after { content:"";position:absolute;width:410px;height:410px;border:57px solid rgba(255,255,255,.07);right:-125px;top:-185px;border-radius:50%;pointer-events:none; }
+    .hero-inner { position:relative;z-index:1; }
+    .eyebrow { text-transform:uppercase;letter-spacing:.13em;color:#dce4ff;font-weight:850;font-size:.73rem; }
+    h1 { font-size:clamp(2rem,4.1vw,3.35rem);line-height:1.1;letter-spacing:-.045em;max-width:680px;margin:12px 0 15px; }
+    .hero p { color:#eaf0ff;font-size:1.04rem;max-width:690px;margin:0; }
+    .chips { display:flex;flex-wrap:wrap;gap:8px;margin-top:23px; }
+    .chip { background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.24);border-radius:99px;padding:7px 12px;font-size:.8rem;font-weight:750; }
+    .led-decor { position:absolute;right:78px;top:53px;display:flex;gap:20px;align-items:flex-end;opacity:.9; }
+    .led-decor i { display:block;width:17px;height:35px;border-radius:15px 15px 5px 5px;background:#c4e2ff;box-shadow:0 0 16px 8px rgba(158,220,255,.18);transform:rotate(-15deg); }
+    .led-decor i:nth-child(2) { height:45px;background:#a2e9ff; }
+    .led-decor i:nth-child(3) { background:#fff;height:31px; }
+    .led-decor i:nth-child(4) { height:42px;background:#c4e2ff; }
+    .layout { display:grid;grid-template-columns:minmax(0,1fr) 302px;align-items:start;gap:23px;margin-top:24px; }
+    main { min-width:0; }
+    aside { position:sticky;top:16px;display:grid;gap:16px; }
+    .card,.stage { background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow); }
+    .card { padding:22px; }
+    .card h2,.card h3 { font-size:1.05rem;letter-spacing:-.025em;margin:0 0 10px; }
+    .card p { margin:0;font-size:.9rem;color:var(--muted); }
+    .mission { margin-bottom:22px;border-left:4px solid var(--indigo); }
+    .mission strong { color:var(--ink); }
+    .mission p+p { margin-top:10px; }
+    .section-label { margin:25px 0 13px; }
+    .section-label h2 { font-size:1.17rem;margin:0; }
+    .section-label p { color:var(--muted);margin:3px 0 0;font-size:.88rem; }
+    .stage { margin-bottom:14px;overflow:hidden; }
+    .stage[open] { border-color:#cad5f7; }
+    .stage.complete { border-color:#a9e0d2; }
+    summary { display:flex;align-items:center;gap:13px;padding:18px 19px;cursor:pointer;list-style:none; }
+    summary::-webkit-details-marker { display:none; }
+    .stage-icon { background:#eff1ff;border-radius:13px;width:46px;height:46px;display:grid;place-items:center;flex:none;font-size:22px; }
+    .stage.complete .stage-icon { background:#e2f8f0; }
+    .stage-heading { min-width:0;flex:1; }
+    .stage-kicker { font-size:.72rem;color:var(--indigo);font-weight:850;letter-spacing:.07em;text-transform:uppercase; }
+    .stage-heading h3 { font-size:1.05rem;line-height:1.25;margin:2px 0; }
+    .stage-heading small { display:block;font-size:.77rem;color:var(--muted); }
+    .stage-meta { display:flex;align-items:center;gap:10px; }
+    .stage-count { font-size:.76rem;font-weight:850;white-space:nowrap;color:#364fae;background:var(--lavender);border-radius:99px;padding:5px 9px; }
+    .stage.complete .stage-count { color:#087b64;background:#e0f8ef; }
+    .chevron { width:9px;height:9px;transform:rotate(45deg);border-bottom:2px solid #71809b;border-right:2px solid #71809b;transition:transform .16s ease;margin-top:-4px; }
+    details[open] .chevron { transform:rotate(225deg);margin-top:3px; }
+    .stage-body { border-top:1px solid #eff1f7;padding:16px 19px 19px; }
+    .tasks { display:grid;gap:8px; }
+    .task { cursor:pointer;display:grid;grid-template-columns:23px minmax(0,1fr);align-items:start;gap:11px;border:1px solid #ebeff6;border-radius:11px;background:#fafbfe;padding:12px;transition:background .15s,border-color .15s; }
+    .task:hover { background:#f4f6ff;border-color:#c4cef9; }
+    .task:has(input:checked) { border-color:#bde6dc;background:#effaf7; }
+    .task input { width:20px;height:20px;margin:2px 0 0;accent-color:var(--aqua);cursor:pointer; }
+    .task span { font-size:.91rem;color:#35415a; }
+    .task:has(input:checked) span { color:#71807e;text-decoration:line-through;text-decoration-color:#9aaca6; }
+    .num { color:var(--indigo);font-weight:900;margin-right:4px; }
+    .hint { margin-top:13px;padding:12px 14px;border-radius:11px;background:#eef3ff;color:#40547d;font-size:.84rem; }
+    .hint.warn { background:#fff7e8;color:#755923; }
+    .pin-grid { display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:14px 0 5px; }
+    .pin { background:#f3f6fc;border:1px solid #e2e8f3;border-radius:12px;padding:12px 6px;text-align:center; }
+    .pin strong { display:block;font-size:1.2rem;color:#394fd0; }
+    .pin small { font-size:.75rem;color:var(--muted); }
+    .code-box { position:relative;margin-top:13px; }
+    .code-title { background:#26344f;color:#d7e1f5;font-size:.76rem;font-weight:800;border-radius:12px 12px 0 0;padding:9px 12px; }
+    pre { margin:0;white-space:pre-wrap;overflow-wrap:anywhere;background:#172237;color:#e6ecfb;border-radius:0 0 12px 12px;padding:15px 16px;font-size:.79rem;line-height:1.65;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;tab-size:2; }
+    .snippet { padding-top:2px; }
+    .snippet pre { border-radius:12px; }
+    .answer { margin-top:16px; }
+    .answer label { display:block;font-size:.88rem;font-weight:750;margin-bottom:7px; }
+    textarea,input[type=text] { width:100%;border:1px solid #cbd5e8;border-radius:10px;outline:none;padding:10px 12px;background:#fff;color:var(--ink); }
+    textarea:focus,input[type=text]:focus { border-color:var(--indigo);box-shadow:0 0 0 3px rgba(66,92,228,.12); }
+    textarea { min-height:82px;resize:vertical;font-size:.9rem; }
+    .code-editor { width:100%;min-height:340px;border-radius:12px;resize:vertical;background:#172237;color:#eaf0ff;font: .83rem/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:15px;tab-size:2; }
+    .editor-note { font-size:.8rem;color:var(--muted);margin-top:8px; }
+    .editor-actions { display:flex;flex-wrap:wrap;gap:8px;margin-top:10px; }
+    .small-button { border-radius:10px;border:1px solid #d8dfef;background:#f6f8fe;color:#354764;font-size:.8rem;font-weight:800;padding:9px 12px; }
+    .small-button:hover { background:#e9edfb; }
+    .small-button.strong { border-color:var(--indigo);background:var(--indigo);color:#fff; }
+    .small-button.strong:hover { background:var(--indigo-dark); }
+    .label { display:block;color:var(--muted);font-size:.76rem;font-weight:850;letter-spacing:.07em;text-transform:uppercase;margin:0 0 8px; }
+    .progress-row { display:flex;align-items:center;gap:16px; }
+    .progress-ring { --pct:0%;position:relative;width:94px;height:94px;border-radius:50%;flex:none;display:grid;place-items:center;background:conic-gradient(var(--aqua) var(--pct),#e5eaf4 0); }
+    .progress-ring:before { content:"";position:absolute;inset:11px;background:#fff;border-radius:50%; }
+    .progress-ring span { z-index:1;position:relative;font-size:1.48rem;font-weight:900; }
+    .progress-text strong { display:block;font-size:1.15rem; }
+    .progress-text small { display:block;color:var(--muted);font-size:.8rem; }
+    .progress-line { height:8px;background:#e8edf5;border-radius:8px;overflow:hidden;margin-top:18px; }
+    .progress-fill { width:0;height:100%;background:var(--aqua);transition:width .2s ease; }
+    .materials { list-style:none;padding:0;margin:12px 0 0; }
+    .materials li { display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid #f0f2f7;font-size:.87rem; }
+    .materials li:last-child { border-bottom:0; }
+    .material-count { display:grid;place-items:center;flex:none;width:28px;height:28px;background:var(--lavender);border-radius:8px;color:var(--indigo);font-weight:900;font-size:.76rem; }
+    .info-line { font-size:.83rem;color:var(--muted);margin-top:10px; }
+    .buttons { display:grid;gap:9px; }
+    .btn { border:0;border-radius:10px;min-height:42px;padding:9px 14px;font-weight:800;font-size:.85rem;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:7px; }
+    .btn.primary { background:var(--indigo);color:#fff; }
+    .btn.primary:hover { background:var(--indigo-dark); }
+    .btn.secondary { background:#edf0fa;color:#344563; }
+    .btn.secondary:hover { background:#e1e7f5; }
+    .btn.ghost { border:1px solid #e1e6ef;background:#fff;color:#61708b; }
+    .done-banner { display:none;margin:15px 0;padding:19px;border:1px solid #bce7db;border-radius:13px;background:#e9f9f3;color:#126b55; }
+    .done-banner.visible { display:block; }
+    .done-banner strong { font-size:1.1rem; }
+    .done-banner p { font-size:.89rem;margin:5px 0 0; }
+    .bonus { background:linear-gradient(130deg,#fffdf7,#fff9ec);border-color:#eee1be; }
+    .bonus .stage-icon { background:#fff0ce; }
+    .toast { position:fixed;z-index:10;bottom:20px;left:50%;transform:translateX(-50%);color:#fff;background:#172237;border-radius:11px;padding:12px 17px;font-weight:750;font-size:.84rem;box-shadow:0 12px 32px rgba(0,0,0,.16);max-width:calc(100vw - 30px);text-align:center; }
+    .toast[hidden] { display:none; }
+    footer { margin-top:34px;text-align:center;color:#929bad;font-size:.78rem; }
+    @media(max-width:900px) { .layout { grid-template-columns:1fr; }.sidebar { position:static;display:grid;grid-template-columns:repeat(2,minmax(0,1fr)); }.sidebar .actions-card { grid-column:span 2; }.led-decor { opacity:.35;right:0; } }
+    @media(max-width:580px) { .container { padding:15px 12px 40px; }.top-inner { padding:13px 15px; }.top-note { display:none; }.hero { padding:25px 21px;border-radius:17px; }.hero p { font-size:.96rem; }.sidebar { grid-template-columns:1fr; }.sidebar .actions-card { grid-column:auto; }.card { padding:18px; }summary { padding:14px 11px;gap:9px; }.stage-body { padding:13px 11px; }.stage-icon { width:39px;height:39px;font-size:19px; }.stage-heading h3 { font-size:.96rem; }.stage-heading small { display:none; }.stage-count { font-size:.7rem;padding:4px 7px; }.task { padding:10px 9px;gap:8px; }.pin-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }.editor-actions { display:grid; }.small-button { width:100%; } }
+    @media print { body { background:#fff; }.topbar,.buttons,.editor-actions,.chevron,footer { display:none!important; }.container { max-width:none;padding:0; }.hero { color:#000;background:#eff2ff;box-shadow:none;border-radius:0;padding:16px 23px; }.hero p,.eyebrow { color:#333!important; }.chip { color:#333;border-color:#bbb; }.layout { display:block; }.sidebar { display:block;position:static; }.sidebar .card { margin-bottom:12px; }.card,.stage { box-shadow:none;break-inside:avoid; }.stage-body { display:block!important; }.stage:not([open]) .stage-body { display:block!important; }.task:has(input:checked) span { text-decoration:none;color:#333; }.code-editor { background:#fff;color:#111;border:1px solid #ccc;min-height:210px; }.done-banner { display:none!important; }.hero:after,.led-decor { display:none; } }
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="top-inner"><div class="brand"><span class="brand-logo" aria-hidden="true">⚡</span> LAB ROBÓTICA</div><div class="top-note">Missão 02 · Circuitos e Programação</div></div></header>
+  <div class="container">
+    <section class="hero" aria-labelledby="titulo"><div class="hero-inner"><span class="eyebrow">Atividade prática · Tinkercad + Arduino</span><h1 id="titulo">Missão: Show de Luzes Programado</h1><p>Você foi contratado para criar uma animação de luzes para um palco. Monte quatro LEDs e escreva o programa que dará vida ao efeito luminoso. Siga as etapas, programe e teste.</p><div class="chips"><span class="chip">💡 4 LEDs azuis</span><span class="chip">🧠 Código Arduino</span><span class="chip">⚡ Efeito vai e volta</span><span class="chip">✅ Checklist interativo</span></div></div><div class="led-decor" aria-hidden="true"><i></i><i></i><i></i><i></i></div></section>
+    <div class="layout">
+      <main>
+        <section class="card mission"><h2>🎯 A missão</h2><p>Um produtor de eventos quer um <strong>efeito de luz que se move de uma ponta à outra e retorna</strong>, repetidamente. Você deverá montar quatro LEDs em linha e programá-los no <strong>Arduino Uno</strong>.</p><p><strong>Regras:</strong> apenas <strong>um LED aceso por vez</strong>; cada LED deve permanecer ligado por <strong>250 milissegundos</strong>; a animação deve continuar enquanto a simulação estiver em execução. O resultado deve parecer uma luz em movimento sobre o palco.</p></section>
+        <div class="section-label"><h2>📋 Sua lista de etapas</h2><p>Marque cada tarefa depois de realizá-la. As marcações são salvas automaticamente neste navegador.</p></div>
+
+        <details class="stage" open><summary><span class="stage-icon" aria-hidden="true">🛠️</span><span class="stage-heading"><span class="stage-kicker">Etapa 01</span><h3>Preparar sua bancada digital</h3><small>Separe os componentes e organize o projeto.</small></span><span class="stage-meta"><span class="stage-count">0/4</span><i class="chevron" aria-hidden="true"></i></span></summary><div class="stage-body"><div class="tasks">
+          <label class="task"><input type="checkbox" data-task="1"><span><b class="num">01.</b> Entre no <strong>Tinkercad</strong>, acesse <strong>Circuitos</strong> e crie um circuito novo.</span></label>
+          <label class="task"><input type="checkbox" data-task="2"><span><b class="num">02.</b> Coloque na área de trabalho um <strong>Arduino Uno R3</strong> e uma <strong>protoboard</strong>.</span></label>
+          <label class="task"><input type="checkbox" data-task="3"><span><b class="num">03.</b> Separe <strong>4 LEDs</strong> (selecione a cor azul), <strong>4 resistores de 330 Ω</strong> e fios.</span></label>
+          <label class="task"><input type="checkbox" data-task="4"><span><b class="num">04.</b> Dê ao seu projeto o nome <strong>Show de Luzes – [seu nome]</strong>.</span></label>
+        </div><div class="hint">💡 O próprio Arduino fornecerá a energia para os LEDs. Nesta atividade, não é necessária uma fonte externa.</div></div></details>
+
+        <details class="stage"><summary><span class="stage-icon" aria-hidden="true">🔌</span><span class="stage-heading"><span class="stage-kicker">Etapa 02</span><h3>Montar os quatro LEDs</h3><small>Cada luz será controlada por um pino digital.</small></span><span class="stage-meta"><span class="stage-count">0/6</span><i class="chevron" aria-hidden="true"></i></span></summary><div class="stage-body"><div class="tasks">
+          <label class="task"><input type="checkbox" data-task="5"><span><b class="num">05.</b> Posicione os <strong>4 LEDs em linha</strong> na protoboard, da esquerda para a direita. Identifique-os como <strong>LED 1, LED 2, LED 3 e LED 4</strong>.</span></label>
+          <label class="task"><input type="checkbox" data-task="6"><span><b class="num">06.</b> Confira a polaridade: o <strong>ânodo (+)</strong> costuma ser a perna maior e o <strong>cátodo (−)</strong>, a menor. Não coloque as duas pernas do mesmo LED em furos conectados entre si.</span></label>
+          <label class="task"><input type="checkbox" data-task="7"><span><b class="num">07.</b> Conecte o pino <strong>GND</strong> do Arduino ao barramento negativo (−) da protoboard.</span></label>
+          <label class="task"><input type="checkbox" data-task="8"><span><b class="num">08.</b> Ligue o <strong>cátodo (−) de cada LED</strong> ao barramento negativo da protoboard.</span></label>
+          <label class="task"><input type="checkbox" data-task="9"><span><b class="num">09.</b> Coloque <strong>um resistor de 330 Ω para cada LED</strong>, entre seu ânodo (+) e o pino digital correspondente do Arduino.</span></label>
+          <label class="task"><input type="checkbox" data-task="10"><span><b class="num">10.</b> Faça as ligações: <strong>D8 → LED 1</strong>, <strong>D9 → LED 2</strong>, <strong>D10 → LED 3</strong>, <strong>D11 → LED 4</strong>. O resistor deverá fazer parte do caminho entre cada pino e seu LED.</span></label>
+        </div><div class="pin-grid" aria-label="Relação entre pinos digitais e LEDs"><div class="pin"><small>LED 1</small><strong>D8</strong></div><div class="pin"><small>LED 2</small><strong>D9</strong></div><div class="pin"><small>LED 3</small><strong>D10</strong></div><div class="pin"><small>LED 4</small><strong>D11</strong></div></div><div class="hint warn">⚠️ Não conecte o LED diretamente a um pino do Arduino sem seu resistor de proteção. Os pinos D8 a D11 são saídas digitais; <strong>não</strong> ligue todos os LEDs diretamente ao pino de 5 V.</div></div></details>
+
+        <details class="stage"><summary><span class="stage-icon" aria-hidden="true">💻</span><span class="stage-heading"><span class="stage-kicker">Etapa 03</span><h3>Começar a programação</h3><small>Prepare os pinos e aprenda três comandos.</small></span><span class="stage-meta"><span class="stage-count">0/5</span><i class="chevron" aria-hidden="true"></i></span></summary><div class="stage-body"><div class="tasks">
+          <label class="task"><input type="checkbox" data-task="11"><span><b class="num">11.</b> No Tinkercad, clique em <strong>Código</strong> e altere a visualização para <strong>Texto</strong> (Arduino/C++). Se aparecer um aviso de conversão, confirme.</span></label>
+          <label class="task"><input type="checkbox" data-task="12"><span><b class="num">12.</b> Crie quatro variáveis para identificar os pinos: <code>led1 = 8</code>, <code>led2 = 9</code>, <code>led3 = 10</code> e <code>led4 = 11</code>.</span></label>
+          <label class="task"><input type="checkbox" data-task="13"><span><b class="num">13.</b> Na função <code>setup()</code>, configure todos os quatro pinos como <strong>OUTPUT</strong>, usando <code>pinMode()</code>.</span></label>
+          <label class="task"><input type="checkbox" data-task="14"><span><b class="num">14.</b> Leia a referência abaixo: <code>HIGH</code> acende o LED, <code>LOW</code> apaga, e <code>delay(250)</code> espera um quarto de segundo.</span></label>
+          <label class="task"><input type="checkbox" data-task="15"><span><b class="num">15.</b> Use o <strong>código-base</strong> da próxima etapa no Tinkercad, ou escreva seu próprio programa com a mesma estrutura.</span></label>
+        </div><div class="code-box"><div class="code-title">COMANDOS QUE VOCÊ VAI UTILIZAR</div><pre><code>pinMode(8, OUTPUT);     // Define o pino 8 como saída
+digitalWrite(8, HIGH);  // Acende o LED ligado ao D8
+delay(250);             // Aguarda 250 milissegundos
+digitalWrite(8, LOW);   // Apaga o LED ligado ao D8</code></pre></div><div class="hint">🔎 A função <code>setup()</code> executa uma vez. A função <code>loop()</code> repete suas instruções continuamente.</div></div></details>
+
+        <details class="stage"><summary><span class="stage-icon" aria-hidden="true">✨</span><span class="stage-heading"><span class="stage-kicker">Etapa 04</span><h3>Criar a animação</h3><small>Faça a luz viajar e voltar pela fileira.</small></span><span class="stage-meta"><span class="stage-count">0/5</span><i class="chevron" aria-hidden="true"></i></span></summary><div class="stage-body"><div class="tasks">
+          <label class="task"><input type="checkbox" data-task="16"><span><b class="num">16.</b> No <code>loop()</code>, faça o <strong>LED 1</strong> acender por 250 ms e depois apagar. Esse primeiro trecho já está no código-base.</span></label>
+          <label class="task"><input type="checkbox" data-task="17"><span><b class="num">17.</b> Acrescente o comando para o <strong>LED 2</strong> acender durante 250 ms e apagar. Faça o mesmo para o <strong>LED 3</strong> e o <strong>LED 4</strong>, nessa ordem.</span></label>
+          <label class="task"><input type="checkbox" data-task="18"><span><b class="num">18.</b> Depois do LED 4, faça a luz <strong>voltar</strong>: acenda e apague o <strong>LED 3</strong> e, em seguida, o <strong>LED 2</strong>.</span></label>
+          <label class="task"><input type="checkbox" data-task="19"><span><b class="num">19.</b> Confira se <strong>todos os acendimentos</strong> têm uma espera de <strong>250 ms</strong> e se você <strong>apaga o LED atual antes de acender o seguinte</strong>.</span></label>
+          <label class="task"><input type="checkbox" data-task="20"><span><b class="num">20.</b> Verifique se o efeito se repete ao final do <code>loop()</code>, sem adicionar um novo acendimento desnecessário do LED 4 ou do LED 1.</span></label>
+        </div><div class="hint"><strong>Sequência esperada:</strong> LED 1 → LED 2 → LED 3 → LED 4 → LED 3 → LED 2 → <em>recomeça no LED 1</em>.</div><div class="code-box"><div class="code-title">CÓDIGO-BASE · COMPLETE A ANIMAÇÃO</div><pre><code id="base-code-display"></code></pre></div><div class="editor-actions"><button class="small-button strong" type="button" id="load-starter">Usar código-base no rascunho</button><button class="small-button" type="button" id="copy-starter">Copiar código-base</button></div><p class="editor-note">O código-base já prepara os quatro pinos e demonstra o LED 1. <strong>Você precisa escrever os demais passos</strong> da sequência.</p></div></details>
+
+        <details class="stage"><summary><span class="stage-icon" aria-hidden="true">🧪</span><span class="stage-heading"><span class="stage-kicker">Etapa 05</span><h3>Testar e corrigir</h3><small>Veja se o circuito obedece ao programa.</small></span><span class="stage-meta"><span class="stage-count">0/5</span><i class="chevron" aria-hidden="true"></i></span></summary><div class="stage-body"><div class="tasks">
+          <label class="task"><input type="checkbox" data-task="21"><span><b class="num">21.</b> Clique em <strong>Iniciar simulação</strong>. Se houver erro de código, leia a mensagem, corrija-o e teste de novo.</span></label>
+          <label class="task"><input type="checkbox" data-task="22"><span><b class="num">22.</b> Confira se os LEDs acendem na ordem <strong>1 → 2 → 3 → 4</strong>.</span></label>
+          <label class="task"><input type="checkbox" data-task="23"><span><b class="num">23.</b> Observe se o efeito retorna por <strong>3 → 2</strong> e então recomeça no LED 1.</span></label>
+          <label class="task"><input type="checkbox" data-task="24"><span><b class="num">24.</b> Verifique se <strong>apenas uma luz fica acesa por vez</strong> e se o tempo de cada acendimento é de 250 ms.</span></label>
+          <label class="task"><input type="checkbox" data-task="25"><span><b class="num">25.</b> Se algo estiver errado, pare a simulação e revise <strong>polaridade, resistores, pinos e sequência do código</strong>. Execute novamente até funcionar.</span></label>
+        </div><div class="hint">🏁 Sua missão estará concluída quando as quatro luzes produzirem continuamente o efeito de ida e volta, sem acendimentos simultâneos.</div></div></details>
+
+        <details class="stage"><summary><span class="stage-icon" aria-hidden="true">📝</span><span class="stage-heading"><span class="stage-kicker">Etapa 06</span><h3>Registrar sua descoberta</h3><small>Explique como as instruções viraram um circuito real.</small></span><span class="stage-meta"><span class="stage-count">0/3</span><i class="chevron" aria-hidden="true"></i></span></summary><div class="stage-body"><div class="tasks">
+          <label class="task"><input type="checkbox" data-task="26"><span><b class="num">26.</b> Responda: <strong>o que o comando <code>digitalWrite()</code> faz?</strong></span></label>
+          <label class="task"><input type="checkbox" data-task="27"><span><b class="num">27.</b> Responda: <strong>qual parte do código define por quanto tempo cada LED permanece aceso?</strong></span></label>
+          <label class="task"><input type="checkbox" data-task="28"><span><b class="num">28.</b> Responda: <strong>qual erro você encontrou (ou poderia encontrar) durante a montagem ou programação, e como corrigi-lo?</strong></span></label>
+        </div><div class="answer"><label for="answer-1">1. Para que serve digitalWrite()?</label><textarea id="answer-1" data-save="answer-1" placeholder="Escreva sua resposta..."></textarea></div><div class="answer"><label for="answer-2">2. Qual comando controla o tempo?</label><textarea id="answer-2" data-save="answer-2" placeholder="Escreva sua resposta..."></textarea></div><div class="answer"><label for="answer-3">3. Que erro você encontrou ou poderia encontrar?</label><textarea id="answer-3" data-save="answer-3" placeholder="Escreva sua resposta..."></textarea></div></div></details>
+
+        <section class="card" style="margin-top:18px"><h2>👨‍💻 Meu código Arduino</h2><p>Você pode escrever seu programa aqui para organizar a solução. Depois, copie-o e cole-o na área de <strong>Texto</strong> do Tinkercad. Este campo é um rascunho, não executa a simulação.</p><div class="answer"><label for="code-draft">Rascunho do programa (.ino)</label><textarea id="code-draft" class="code-editor" data-save="code-draft" spellcheck="false" placeholder="// Escreva seu código aqui ou use o código-base..."></textarea></div><div class="editor-actions"><button class="small-button strong" id="copy-code" type="button">Copiar meu código</button><button class="small-button" id="download-code" type="button">Baixar código .ino</button></div><div class="editor-note">O código e suas respostas são guardados somente neste navegador. Para entregar ao professor, use os botões de exportação ou salve seu projeto no Tinkercad.</div></section>
+
+        <details class="stage bonus" style="margin-top:17px"><summary><span class="stage-icon" aria-hidden="true">🏆</span><span class="stage-heading"><span class="stage-kicker">Extra · Opcional</span><h3>Desafio para quem terminar primeiro</h3><small>Personalize seu espetáculo sem alterar a montagem.</small></span><span class="stage-meta"><i class="chevron" aria-hidden="true"></i></span></summary><div class="stage-body"><p style="font-size:.9rem;margin-top:0">Primeiro, faça a luz percorrer a fileira em <strong>100 ms</strong> por LED. Depois, tente criar um efeito em que <strong>todos os LEDs acendam juntos por 1 segundo</strong> no fim de cada sequência completa e, em seguida, todos apaguem por 1 segundo antes da próxima repetição.</p><div class="hint">Este desafio extra não faz parte do checklist obrigatório.</div></div></details>
+        <div class="done-banner" id="done-banner" role="status"><strong>🎉 Missão concluída!</strong><p>Você marcou todas as tarefas. Mostre ao professor o circuito funcionando no Tinkercad e explique a lógica do programa.</p></div>
+      </main>
+      <aside class="sidebar">
+        <section class="card"><h2>👤 Identificação</h2><label class="label" for="student-name">Nome do aluno ou da dupla</label><input type="text" id="student-name" data-save="student-name" placeholder="Digite aqui seu nome"><div class="info-line">Preencha para aparecer no relatório de entrega.</div></section>
+        <section class="card"><h2>📊 Seu progresso</h2><div class="progress-row"><div class="progress-ring" id="progress-ring"><span id="progress-percent">0%</span></div><div class="progress-text"><strong id="progress-label">0 de 28</strong><small>tarefas concluídas</small></div></div><div class="progress-line"><div class="progress-fill" id="progress-fill"></div></div><p style="margin-top:12px" id="next-step">Comece pela primeira etapa.</p></section>
+        <section class="card"><h2>🧰 Materiais</h2><ul class="materials"><li><span class="material-count">1×</span>Arduino Uno R3</li><li><span class="material-count">1×</span>Protoboard</li><li><span class="material-count">4×</span>LED azul</li><li><span class="material-count">4×</span>Resistor de 330 Ω</li><li><span class="material-count">∞</span>Fios de conexão</li></ul><div class="info-line">Não serão usados sensores, potenciômetros, motores ou fontes externas.</div></section>
+        <section class="card actions-card"><h2>📥 Sua atividade</h2><div class="buttons"><a class="btn primary" href="https://www.tinkercad.com/" target="_blank" rel="noopener noreferrer">Abrir o Tinkercad ↗</a><button class="btn secondary" type="button" id="export-report">Baixar relatório de progresso</button><button class="btn secondary" type="button" id="print-page">Imprimir atividade</button><button class="btn ghost" type="button" id="reset-all">Recomeçar atividade</button></div><p style="margin-top:12px">As marcações são feitas por você; o site não verifica automaticamente o circuito. A conferência final será realizada pelo professor.</p></section>
+      </aside>
+    </div>
+    <footer>LAB ROBÓTICA · Missão 02 · Transforme instruções em um circuito programado.</footer>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <script>
+    (() => {
+      'use strict';
+      const STORAGE_KEY = 'lab_robotica_show_leds_v1';
+      const starter = `// MISSÃO 02 — Show de Luzes
+// Complete o efeito de ida e volta.
+
+const int led1 = 8;
+const int led2 = 9;
+const int led3 = 10;
+const int led4 = 11;
+
+void setup() {
+  pinMode(led1, OUTPUT);
+  pinMode(led2, OUTPUT);
+  pinMode(led3, OUTPUT);
+  pinMode(led4, OUTPUT);
+}
+
+void loop() {
+  // LED 1: acende, espera e apaga.
+  digitalWrite(led1, HIGH);
+  delay(250);
+  digitalWrite(led1, LOW);
+
+  // SUA VEZ: faça LED 2, LED 3 e LED 4.
+
+  // DEPOIS: faça a volta pelo LED 3 e pelo LED 2.
+  // O loop recomeçará no LED 1.
+}`;
+      const $ = (selector) => document.querySelector(selector);
+      const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+      const taskInputs = $$('input[data-task]');
+      const fields = $$('[data-save]');
+      const stages = $$('.stage:not(.bonus)');
+      let state = { checks: {}, fields: {} };
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+        if (saved && typeof saved === 'object') {
+          state = { checks: saved.checks && typeof saved.checks === 'object' ? saved.checks : {}, fields: saved.fields && typeof saved.fields === 'object' ? saved.fields : {} };
+        }
+      } catch (_) { /* continua sem armazenamento local */ }
+      const save = () => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {} };
+      const flash = (message) => {
+        const toast = $('#toast');
+        toast.textContent = message;
+        toast.hidden = false;
+        clearTimeout(flash.timeout);
+        flash.timeout = setTimeout(() => { toast.hidden = true; }, 2800);
+      };
+      const updateProgress = () => {
+        const completed = taskInputs.filter(input => input.checked).length;
+        const total = taskInputs.length;
+        const percentage = Math.round(completed / total * 100);
+        $('#progress-percent').textContent = percentage + '%';
+        $('#progress-label').textContent = completed + ' de ' + total;
+        $('#progress-ring').style.setProperty('--pct', percentage + '%');
+        $('#progress-fill').style.width = percentage + '%';
+        stages.forEach(stage => {
+          const stageTasks = Array.from(stage.querySelectorAll('input[data-task]'));
+          const done = stageTasks.filter(input => input.checked).length;
+          stage.querySelector('.stage-count').textContent = done + '/' + stageTasks.length;
+          stage.classList.toggle('complete', done === stageTasks.length);
+        });
+        const next = taskInputs.find(input => !input.checked);
+        $('#next-step').textContent = next ? 'Próximo passo: tarefa ' + String(next.dataset.task).padStart(2, '0') + '.' : 'Todas as etapas obrigatórias foram marcadas!';
+        $('#done-banner').classList.toggle('visible', completed === total);
+      };
+      taskInputs.forEach(input => {
+        input.checked = !!state.checks[input.dataset.task];
+        input.addEventListener('change', () => {
+          state.checks[input.dataset.task] = input.checked;
+          save();updateProgress();
+        });
+      });
+      fields.forEach(input => {
+        input.value = typeof state.fields[input.dataset.save] === 'string' ? state.fields[input.dataset.save] : '';
+        input.addEventListener('input', () => {state.fields[input.dataset.save] = input.value;save();});
+      });
+      $('#base-code-display').textContent = starter;
+      $('#load-starter').addEventListener('click', () => {
+        const editor = $('#code-draft');
+        if (editor.value.trim() && !confirm('Substituir o código que já está no rascunho pelo código-base?')) return;
+        editor.value = starter;
+        state.fields['code-draft'] = starter; save();
+        editor.focus();flash('Código-base inserido. Complete os LEDs restantes!');
+      });
+      const copy = async (value) => {
+        if (!value.trim()) { flash('Não há código para copiar.');return; }
+        try {
+          if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error('Clipboard indisponível');
+          await navigator.clipboard.writeText(value);
+          flash('Código copiado! Cole-o no Tinkercad.');
+        } catch (_) {
+          const box = $('#code-draft');
+          if (box.value !== value && box.value.trim() && !confirm('Copiar o código-base usando o rascunho pode substituir seu texto. Continuar?')) return;
+          box.value = value;state.fields['code-draft'] = value;save();box.focus();box.select();
+          try { document.execCommand('copy');flash('Código selecionado e cópia solicitada.'); }
+          catch (_) { flash('Código selecionado: copie com Ctrl+C.'); }
+        }
+      };
+      $('#copy-starter').addEventListener('click', () => copy(starter));
+      $('#copy-code').addEventListener('click', () => copy($('#code-draft').value));
+      const downloadText = (text, filename, type='text/plain;charset=utf-8') => {
+        const blob = new Blob([text], { type });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');link.href = url;link.download = filename;
+        document.body.appendChild(link);link.click();link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      };
+      $('#download-code').addEventListener('click', () => {
+        const code = $('#code-draft').value;
+        if (!code.trim()) { flash('Escreva ou carregue seu código antes de baixar.');return; }
+        downloadText(code, 'ShowDeLuzes.ino','text/plain;charset=utf-8');
+        flash('Arquivo .ino preparado para download.');
+      });
+      $('#export-report').addEventListener('click', () => {
+        const student = $('#student-name').value.trim() || 'Não informado';
+        const done = taskInputs.filter(input => input.checked).length;
+        const lines = [
+          'MISSÃO ROBÓTICA 02 — SHOW DE LUZES PROGRAMADO',
+          'Aluno(a) / dupla: ' + student,
+          'Progresso: ' + done + '/' + taskInputs.length + ' tarefas',
+          '', 'ETAPAS E CHECKLIST'
+        ];
+        stages.forEach((stage, i) => {
+          lines.push('', 'ETAPA ' + (i+1) + ' — ' + stage.querySelector('h3').textContent);
+          stage.querySelectorAll('input[data-task]').forEach(input => {
+            const label = input.closest('.task').innerText.replace(/\s+/g, ' ').trim();
+            lines.push((input.checked ? '[X] ' : '[ ] ') + label);
+          });
+        });
+        lines.push('', 'RESPOSTAS');
+        [1,2,3].forEach(n => lines.push(n + '. ' + ($('#answer-'+n).value.trim() || '(sem resposta)')));
+        lines.push('', 'CÓDIGO ARDUINO', $('#code-draft').value.trim() || '(sem código no rascunho)');
+        downloadText(lines.join('\n'), 'Relatorio_Show_de_Luzes.txt');
+        flash('Relatório preparado para download.');
+      });
+      $('#print-page').addEventListener('click', () => window.print());
+      $('#reset-all').addEventListener('click', () => {
+        if (!confirm('Apagar as marcações, o nome, as respostas e o código guardados nesta atividade?')) return;
+        state = { checks: {}, fields: {} };save();
+        taskInputs.forEach(input => {input.checked = false;});
+        fields.forEach(input => {input.value = '';});
+        updateProgress();flash('Atividade reiniciada.');
+      });
+      updateProgress();
+    })();
+  </script>
+</body>
+</html>
