@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090f1f">
+  <meta name="description" content="Missão 04 de robótica no Tinkercad: dois pushbuttons, dois LEDs e programação Arduino simples. Checklist interativo sem questionário final.">
+  <title>Missão 04 — Central de Efeitos | Robótica no Tinkercad</title>
+  <style>
+    :root { color-scheme:dark;--bg:#090f1f;--surface:#121b2f;--surface2:#19263e;--surface3:#1e304c;--border:#2a3d56;--ink:#eef7ff;--muted:#9eb3c9;--accent:#64e3c0;--blue:#7ab5ff;--warm:#ffcf81;--shadow:0 18px 70px #0004 }
+    * { box-sizing:border-box }
+    html { scroll-behavior:smooth }
+    body { margin:0; background:var(--bg); color:var(--ink); font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; line-height:1.65 }
+    body::before { content:""; position:fixed; inset:0; z-index:-1; pointer-events:none; background:radial-gradient(ellipse 720px 450px at 0 0,#12394b77,transparent 75%),radial-gradient(ellipse 750px 500px at 100% 15%,#263b6f66,transparent 78%) }
+    button,textarea { font:inherit }
+    button { cursor:pointer }
+    a { color:inherit }
+    .wrap { width:min(1170px,calc(100% - 48px)); margin-inline:auto }
+    .top { display:flex; align-items:center; justify-content:space-between; min-height:76px; gap:16px; border-bottom:1px solid #ffffff1b }
+    .brand { display:flex; align-items:center; gap:11px; text-decoration:none; text-transform:uppercase; letter-spacing:.1em; font-weight:850; font-size:12px }
+    .brand-symbol { display:grid; place-items:center; width:37px; height:37px; border-radius:12px; border:1px solid #64e3c063; background:#64e3c012; font-size:18px; color:var(--accent) }
+    .toplabels { display:flex; align-items:center; gap:9px; flex-wrap:wrap }
+    .toplabel { color:#c3d7e8; font-size:11px; font-weight:750; border-radius:999px; background:#19263d; border:1px solid #ffffff20; padding:7px 11px }
+    .toplabel.active { color:#89fbd5; border-color:#64e3c054; background:#64e3c012 }
+    .hero { display:grid; grid-template-columns:minmax(0,1fr) minmax(310px,.85fr); gap:55px; align-items:center; padding:65px 0 42px }
+    .kicker { margin:0 0 17px; color:var(--accent); text-transform:uppercase; letter-spacing:.22em; font-size:11px; font-weight:900 }
+    h1 { margin:0; font-size:clamp(43px,5.4vw,70px); letter-spacing:-.06em; line-height:1.045; max-width:630px }
+    h1 em { font-style:normal; background:linear-gradient(105deg,#5ae7c0,#80b5ff 68%,#c3b0ff); background-clip:text; color:transparent }
+    .lead { max-width:580px; color:#b5c4d7; font-size:15.5px; line-height:1.8; margin:22px 0 }
+    .facts { display:flex; gap:7px; flex-wrap:wrap }
+    .fact { font-size:11px; border-radius:8px; padding:7px 10px; background:#172237; color:#c1d6e8; font-weight:800; border:1px solid #ffffff1c }
+    .preview { border:1px solid #47627e88; border-radius:22px; background:linear-gradient(160deg,#203451,#111b2f 80%); box-shadow:var(--shadow); padding:24px; overflow:hidden; position:relative }
+    .preview::before { content:""; position:absolute; width:200px; height:200px; right:-100px; top:-90px; background:#66ebbb2b; filter:blur(50px); pointer-events:none }
+    .previewhead { display:flex; justify-content:space-between; gap:15px; color:#bccbe0; letter-spacing:.14em; text-transform:uppercase; font-size:10px; font-weight:900 }
+    .previewhead span:last-child { color:var(--accent) }
+    .lamps { display:grid; grid-template-columns:1fr 1fr; gap:13px; margin:28px 0 18px }
+    .lamp-card { text-align:center; padding:25px 10px 17px; border:1px solid #ffffff22; background:#0b1429a1; border-radius:17px }
+    .lamp { display:block; width:65px; height:65px; border-radius:100%; border:5px solid #ffffff1c; box-shadow:inset 0 7px 18px #0008; margin:0 auto 15px; transition:.17s ease }
+    .lamp.green { background:#1b4c42 }
+    .lamp.blue { background:#213b60 }
+    .lamp.green.on { background:#62ffc8; box-shadow:0 0 18px #56ffc7a5,0 0 45px #46f1b950,inset 0 0 15px #ffffff66 }
+    .lamp.blue.on { background:#78bcff; box-shadow:0 0 18px #74beffa5,0 0 45px #6eb8ff55,inset 0 0 15px #ffffff66 }
+    .lamp-name { display:block; font-size:12px; font-weight:850; color:#dce8f3 }
+    .lamp-sub { display:block; color:#899fbc; font-size:11px; margin-top:2px }
+    .buttons { display:grid; grid-template-columns:1fr 1fr; gap:13px }
+    .button-demo { background:linear-gradient(#3c5271,#253a58); box-shadow:0 5px 0 #0a1628; border:1px solid #68809b; color:#eff9ff; border-radius:12px; min-height:54px; font-size:12px; font-weight:900; user-select:none; touch-action:none; -webkit-user-select:none }
+    .button-demo.down { transform:translateY(4px); box-shadow:0 1px 0 #0a1628; border-color:#72e9c9; background:linear-gradient(#388c80,#2c625f) }
+    .previewnote { color:#a3b5ca; font-size:11px; line-height:1.6; text-align:center; margin:19px 0 0 }
+    .purpose { border:1px solid #64e3c044; background:linear-gradient(105deg,#1b453e73,#19345b55); border-radius:14px; display:flex; gap:13px; padding:19px 23px; margin-bottom:34px }
+    .purposeicon { font-size:22px; color:var(--accent); line-height:1.2 }
+    .purpose strong { display:block; font-size:14px; margin-bottom:3px }
+    .purpose p { margin:0; color:#c2cfdd; font-size:13px }
+    .layout { display:grid; grid-template-columns:280px minmax(0,1fr); align-items:start; gap:25px; padding-bottom:70px }
+    aside { position:sticky; top:20px }
+    .sidebar { background:#141f32ed; border:1px solid var(--border); border-radius:18px; padding:22px; box-shadow:0 15px 35px #0002 }
+    .proghead { display:flex; justify-content:space-between; align-items:center; gap:12px }
+    .eyelabel { font-size:10px; text-transform:uppercase; letter-spacing:.16em; font-weight:900; color:#8fa6c2 }
+    .percent { font-size:26px; font-weight:900; color:var(--accent); letter-spacing:-.04em }
+    .progress { border-radius:20px; height:9px; background:#2d405d; margin:12px 0 10px; overflow:hidden }
+    .progressfill { width:0; background:linear-gradient(90deg,#42cfae,#8ae6dd); height:100%; border-radius:20px; transition:width .2s ease }
+    .progtext { margin:0; color:#aabdd2; font-size:12px }
+    .asidelabel { color:#7f9ab7; font-size:10px; font-weight:900; letter-spacing:.18em; text-transform:uppercase; margin:26px 0 11px }
+    .navlist { display:grid; gap:5px }
+    .navitem { text-decoration:none; display:flex; align-items:center; gap:10px; padding:9px 7px; border-radius:9px; font-size:12px; font-weight:760; color:#b3c7d9 }
+    .navitem:hover,.navitem:focus-visible { background:#253754; color:white; outline:none }
+    .navnum { width:25px; height:25px; display:grid; place-items:center; flex:none; border:1px solid #46607d; border-radius:50%; font-size:11px }
+    .navitem.done .navnum { background:#2b705d; border-color:var(--accent); color:#aafae0 }
+    .navitem.done { color:#d1f3e4 }
+    .sideactions { display:grid; gap:9px; margin-top:26px }
+    .action { border:1px solid #4b6984; background:#263d57; border-radius:10px; min-height:40px; padding:10px 12px; color:#f2f8ff; font-weight:800; font-size:12px }
+    .action:hover { border-color:#83e5cc }
+    .action.secondary { background:transparent; color:#c0cfdf }
+    .sidetip { font-size:11px; color:#8296af; margin:13px 0 0; text-align:center; line-height:1.6 }
+    .stage { border:1px solid var(--border); background:#131e31f5; border-radius:18px; overflow:hidden; margin:0 0 18px; scroll-margin-top:22px }
+    .stagehead { display:flex; align-items:flex-start; gap:14px; padding:22px 24px; border-bottom:1px solid #ffffff1a }
+    .num { width:43px; height:43px; flex:none; display:grid; place-items:center; border-radius:12px; font-size:18px; font-weight:900; background:#1b3b48; border:1px solid #426a76; color:#97f9d7 }
+    .stagemeta { text-transform:uppercase; font-size:10px; font-weight:850; letter-spacing:.13em; color:var(--accent); margin:0 0 4px }
+    .stagetitle { font-size:21px; line-height:1.25; font-weight:850; letter-spacing:-.02em; margin:0 }
+    .stagesub { color:#9eb4ca; font-size:12.5px; margin:7px 0 0 }
+    .stagecount { margin-left:auto; flex:none; font-size:11px; border-radius:30px; padding:4px 8px; border:1px solid #3b4c67; color:#aec1d5 }
+    .tasks { padding:10px 13px 15px }
+    .task { display:flex; align-items:flex-start; gap:13px; border-radius:10px; padding:13px 12px; cursor:pointer }
+    .task:hover { background:#ffffff08 }
+    .task input { appearance:none; flex:none; margin:3px 0 0; width:21px; height:21px; border:1.7px solid #65809a; border-radius:6px; background:#18283e; display:grid; place-items:center; cursor:pointer }
+    .task input:checked { background:#44d7ae; border-color:#44d7ae }
+    .task input:checked::after { content:"✓"; color:#10322f; font-size:15px; font-weight:900; line-height:1 }
+    .task input:focus-visible { outline:3px solid #83bcff; outline-offset:2px }
+    .taskbody { font-size:13px; color:#dce9f7; line-height:1.67 }
+    .taskbody strong { color:#fff }
+    .task:has(input:checked) .taskbody { color:#8fa4bc }
+    .task:has(input:checked) .taskbody strong { color:#aabed1 }
+    .hint { margin:2px 24px 24px; padding:14px 16px; border-left:3px solid #7cb5f8; border-radius:0 10px 10px 0; background:#1b2d47 }
+    .hint strong { display:block; color:#c8e2ff; font-size:12px; margin-bottom:4px }
+    .hint p { color:#bfd0e0; margin:0; font-size:12px; line-height:1.75 }
+    .hint.warning { border-color:#f5c782; background:#382f2e }
+    .hint.warning strong { color:#ffe0ad }
+    .hint.warning p { color:#e6cdc2 }
+    .pills { display:flex; flex-wrap:wrap; gap:9px; padding:18px 24px 3px }
+    .pill { background:#1c2a40; border:1px solid #31485f; color:#c9dfef; border-radius:9px; padding:8px 10px; font-size:12px }
+    .pill b { color:#76eed1 }
+    .connection { width:calc(100% - 48px); margin:16px 24px 24px; border-collapse:separate; border-spacing:0; border:1px solid #34516b; border-radius:12px; overflow:hidden; font-size:12px }
+    .connection th { text-align:left; background:#1f344e; color:#c1e9ec; padding:10px 13px; font-weight:850 }
+    .connection td { background:#17283e; color:#cedbe9; padding:11px 13px; border-top:1px solid #30445d }
+    .connection td:first-child { font-weight:850; color:#eaf4fe }
+    .coding { padding:0 24px 24px }
+    .coding label { display:block; font-weight:850; font-size:13px; margin:14px 0 10px }
+    textarea { display:block; resize:vertical; min-height:330px; width:100%; max-width:100%; border-radius:12px; padding:18px; border:1px solid #46627c; color:#c9f2e6; background:#071323; font:12.5px/1.65 ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace; tab-size:2 }
+    textarea:focus-visible { outline:3px solid #5ce6bf55; border-color:#62e1c0 }
+    .codetools { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-top:11px }
+    .codecopy { border:1px solid #57bfa5; color:#d6fff2; background:#26594f; padding:9px 14px; border-radius:9px; font-size:12px; font-weight:850 }
+    .codecopy:hover { background:#2b6b5a }
+    .status { font-size:11px; color:#9ab4c6 }
+    details { margin-top:16px; border:1px solid #3b536d; border-radius:12px; overflow:hidden; background:#192940 }
+    summary { padding:13px 15px; cursor:pointer; color:#cce7ff; font-size:12px; font-weight:850 }
+    summary:hover { background:#ffffff08 }
+    .codeexplain { margin:0 14px 12px; color:#b6c9db; font-size:12px }
+    pre { white-space:pre; overflow-x:auto; margin:0 13px 15px; background:#081625; padding:14px; border-radius:10px; color:#ccf1d8; font-size:12px; line-height:1.65; border:1px solid #2f4a62 }
+    code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:.92em; background:#22314b; padding:2px 4px; border-radius:4px }
+    pre code { padding:0; background:none; font-size:inherit }
+    .requirements { padding:13px 24px 24px; display:grid; gap:9px }
+    .requirement { display:flex; gap:12px; border:1px solid #354960; background:#1a2a40; border-radius:10px; padding:12px 15px; color:#d3e1ee; font-size:12px }
+    .re-dot { width:9px; height:9px; border-radius:50%; background:#63e5bf; margin-top:5px; flex:none; box-shadow:0 0 8px #65e8be77 }
+    .finish { display:flex; align-items:center; gap:17px; border:1px solid #64e3c04d; border-radius:16px; padding:23px; background:linear-gradient(90deg,#1a403f75,#1d35536b); margin-top:22px }
+    .finishicon { display:grid; place-items:center; flex:none; width:48px; height:48px; border-radius:14px; border:1px solid #69e3c057; color:#96f6d9; font-size:23px }
+    .finish h3 { font-size:19px; margin:0 0 3px }
+    .finish p { color:#bed1df; font-size:12.5px; margin:0 }
+    .finish.completed { border-color:#61edc6; box-shadow:0 0 45px #5ee4c21a }
+    .foot { border-top:1px solid #ffffff1a; display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px; color:#8ca6bf; font-size:11px; padding:24px 0 45px }
+    @media(max-width:940px) { .hero { gap:24px } .layout { grid-template-columns:236px minmax(0,1fr); gap:17px } .sidebar { padding:16px } }
+    @media(max-width:720px) { .wrap { width:min(100% - 28px,620px) } .top { min-height:66px } .toplabel:not(.active) { display:none } .hero { grid-template-columns:1fr; padding:39px 0 28px; gap:26px } h1 { font-size:clamp(43px,10vw,60px) } .lead { font-size:14px } .layout { grid-template-columns:1fr } aside { position:static } .navlist { grid-template-columns:1fr 1fr } .sideactions { grid-template-columns:1fr 1fr } .stagehead { padding:18px 16px; gap:10px } .stagetitle { font-size:18px } .num { width:39px; height:39px } .tasks { padding:10px 7px } .hint { margin:0 16px 18px } .pills { padding:18px 16px 4px } .connection { width:calc(100% - 32px); margin:15px 16px 19px } .connection td,.connection th { padding:9px 8px; font-size:11px } .coding { padding:0 16px 18px } .requirements { padding:10px 16px 20px } }
+    @media(max-width:380px) { .navlist { grid-template-columns:1fr } .stagehead { flex-wrap:wrap } .stagecount { margin-left:50px } .lamp { width:54px; height:54px } }
+    @media(prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; transition:none!important } }
+    @media print { :root { color-scheme:light } body { background:white!important; color:#1c2431!important } body::before,.top,.preview,aside,.codetools,.foot { display:none!important } .wrap { width:100%; max-width:none } .hero { display:block; padding:14px 0 } h1,h1 em { color:#111!important; background:none!important; font-size:29pt } .kicker { color:#115f52 } .lead,.purpose p,.taskbody,.taskbody strong,.stagesub,.hint p,.requirement,.finish p { color:#26374b!important } .facts .fact,.purpose,.stage,.finish,.hint,.pill { color:#223247; background:white!important; border-color:#9facba!important; box-shadow:none } .purpose { padding:10px 14px; margin:0 0 15px } .layout { display:block } .stage { page-break-inside:avoid; break-inside:avoid; margin-bottom:10px } .stagehead { padding:10px 15px } .stagetitle { color:#152132 } .num { background:#eef7f4; color:#145c49; border-color:#9bb9ae } .stagemeta { color:#155e4e } .task { padding:6px 11px } .task input { appearance:auto; accent-color:#168364; margin-top:6px; border:0 } .hint { padding:7px 10px; background:#f5f8fb!important } .hint strong { color:#234765 } .connection th,.connection td { background:white; color:#152537; border-color:#aabaca } .coding { padding-bottom:14px } textarea { color:#152537; background:white; min-height:280px } details { display:none } .requirement { padding:6px 10px } }
+  </style>
+</head>
+<body>
+<header class="wrap top"><a class="brand" href="#inicio"><span class="brand-symbol" aria-hidden="true">✧</span> Laboratório de Robótica</a><div class="toplabels"><span class="toplabel">Atividade prática 04</span><span class="toplabel active">● Programação iniciante</span></div></header>
+<main class="wrap" id="inicio">
+  <section class="hero" aria-labelledby="titulo">
+    <div><p class="kicker">Missão 04 / Arduino + lógica</p><h1 id="titulo">Central de <em>Efeitos Luminosos</em></h1><p class="lead">Uma cabine de fotografia precisa de dois comandos independentes de luz. Sua tarefa é <strong style="color:#fff">interpretar as instruções, montar o circuito e programar o Arduino</strong> para que cada botão controle uma cor.</p><div class="facts"><span class="fact">✦ Tinkercad</span><span class="fact">◉ Arduino Uno</span><span class="fact">◈ 2 pushbuttons</span><span class="fact">● 2 LEDs</span><span class="fact">&lt;/&gt; Código simples</span></div></div>
+    <div class="preview" aria-label="Demonstração do efeito esperado"><div class="previewhead"><span>Prévia da cabine</span><span>● Interativa</span></div><div class="lamps"><div class="lamp-card"><span class="lamp green" id="lamp-green" aria-hidden="true"></span><span class="lamp-name">Efeito verde</span><span class="lamp-sub">Botão B1</span></div><div class="lamp-card"><span class="lamp blue" id="lamp-blue" aria-hidden="true"></span><span class="lamp-name">Efeito azul</span><span class="lamp-sub">Botão B2</span></div></div><div class="buttons"><button type="button" class="button-demo" data-demo="b1" aria-pressed="false">SEGURE B1</button><button type="button" class="button-demo" data-demo="b2" aria-pressed="false">SEGURE B2</button></div><p class="previewnote">Segure cada botão para acender a respectiva luz. Pressione os dois juntos para ativar as duas cores. Esta é apenas a prévia do resultado — não é o desenho do circuito.</p></div>
+  </section>
+  <section class="purpose"><span class="purposeicon" aria-hidden="true">✦</span><div><strong>Sua missão</strong><p>O botão <strong>B1</strong> deve acender o LED <strong>verde</strong> apenas enquanto estiver pressionado. O botão <strong>B2</strong> faz o mesmo com o LED <strong>azul</strong>. Com ambos soltos, os LEDs ficam apagados; com ambos apertados, os LEDs acendem juntos. <strong>Não é um semáforo.</strong></p></div></section>
+  <div class="layout">
+    <aside aria-label="Painel de acompanhamento"><div class="sidebar"><div class="proghead"><span class="eyelabel">Seu progresso</span><span class="percent" id="percent">0%</span></div><div class="progress" role="progressbar" aria-label="Progresso da atividade" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-root"><div class="progressfill" id="progress-fill"></div></div><p class="progtext" id="progress-text">0 tarefas concluídas</p><div class="asidelabel">Etapas da missão</div><nav class="navlist" aria-label="Navegação das etapas">
+      <a href="#etapa-1" class="navitem" data-nav="1"><span class="navnum">01</span>Preparação</a>
+      <a href="#etapa-2" class="navitem" data-nav="2"><span class="navnum">02</span>Entenda as conexões</a>
+      <a href="#etapa-3" class="navitem" data-nav="3"><span class="navnum">03</span>Monte os LEDs</a>
+      <a href="#etapa-4" class="navitem" data-nav="4"><span class="navnum">04</span>Ligue os botões</a>
+      <a href="#etapa-5" class="navitem" data-nav="5"><span class="navnum">05</span>Programe</a>
+      <a href="#etapa-6" class="navitem" data-nav="6"><span class="navnum">06</span>Teste e entregue</a>
+    </nav><div class="sideactions"><button type="button" class="action" id="print-btn">Imprimir atividade</button><button type="button" class="action secondary" id="reset-btn">Reiniciar progresso</button></div><p class="sidetip">Marcações e código são guardados neste navegador, quando permitido.</p></div></aside>
+    <div class="content">
+      <section class="stage" data-stage="1" id="etapa-1"><header class="stagehead"><div class="num">01</div><div><p class="stagemeta">Comece aqui</p><h2 class="stagetitle">Prepare a bancada virtual</h2><p class="stagesub">Separe os componentes antes de fazer qualquer ligação.</p></div><span class="stagecount" data-count="1">0/0</span></header><div class="pills"><span class="pill"><b>1×</b> Arduino Uno R3</span><span class="pill"><b>1×</b> protoboard</span><span class="pill"><b>1×</b> LED verde</span><span class="pill"><b>1×</b> LED azul</span><span class="pill"><b>2×</b> resistores 330 Ω</span><span class="pill"><b>2×</b> pushbuttons</span><span class="pill">Fios de conexão</span></div><div class="tasks">
+        <label class="task"><input type="checkbox" data-task="1-1"><span class="taskbody">Entre no <strong>Tinkercad → Circuitos</strong> e crie um novo circuito.</span></label>
+        <label class="task"><input type="checkbox" data-task="1-2"><span class="taskbody">Dê ao projeto o nome <strong>Missão 04 — Central de Efeitos</strong>.</span></label>
+        <label class="task"><input type="checkbox" data-task="1-3"><span class="taskbody">Adicione <strong>1 Arduino Uno R3</strong> e <strong>1 protoboard</strong>.</span></label>
+        <label class="task"><input type="checkbox" data-task="1-4"><span class="taskbody">Adicione <strong>2 LEDs</strong> (verde e azul), <strong>2 resistores de 330 Ω</strong> e <strong>2 botões de pressão (pushbuttons)</strong>.</span></label>
+        <label class="task"><input type="checkbox" data-task="1-5"><span class="taskbody">Organize os componentes na área de trabalho. <strong>Não use uma bateria ou fonte externa</strong>: o Arduino será alimentado pela simulação.</span></label>
+      </div></section>
+      <section class="stage" data-stage="2" id="etapa-2"><header class="stagehead"><div class="num">02</div><div><p class="stagemeta">Planejamento</p><h2 class="stagetitle">Entenda o que cada fio fará</h2><p class="stagesub">Leia o plano de conexões antes de montar.</p></div><span class="stagecount" data-count="2">0/0</span></header><table class="connection"><thead><tr><th>Componente</th><th>Conexão no Arduino</th><th>Outra conexão</th></tr></thead><tbody><tr><td>LED verde</td><td>Pino digital <strong>8</strong>, com resistor de 330 Ω em série</td><td>Cátodo (−) no GND</td></tr><tr><td>LED azul</td><td>Pino digital <strong>9</strong>, com resistor de 330 Ω em série</td><td>Cátodo (−) no GND</td></tr><tr><td>Botão B1</td><td>Pino digital <strong>2</strong></td><td>GND</td></tr><tr><td>Botão B2</td><td>Pino digital <strong>3</strong></td><td>GND</td></tr></tbody></table><div class="tasks">
+        <label class="task"><input type="checkbox" data-task="2-1"><span class="taskbody">Identifique no Arduino os pinos digitais <strong>2, 3, 8 e 9</strong> e um pino <strong>GND</strong>.</span></label>
+        <label class="task"><input type="checkbox" data-task="2-2"><span class="taskbody">Observe cada LED: o <strong>ânodo (+)</strong> recebe a corrente através do resistor; o <strong>cátodo (−)</strong> vai ao GND.</span></label>
+        <label class="task"><input type="checkbox" data-task="2-3"><span class="taskbody">Observe que o pushbutton tem <strong>quatro terminais em dois pares</strong>. Ao pressionar, ele conecta os dois pares. Sua montagem deve usar um terminal de <strong>cada par</strong>.</span></label>
+        <label class="task"><input type="checkbox" data-task="2-4"><span class="taskbody">Leia a regra principal: o botão será configurado no código como <code>INPUT_PULLUP</code>. Assim, <strong>solto = HIGH</strong> e <strong>pressionado = LOW</strong>.</span></label>
+      </div><div class="hint"><strong>💡 Por que usar INPUT_PULLUP?</strong><p>O Arduino ativa um resistor interno que mantém a entrada em nível alto quando o botão está solto. Ao pressionar, o botão conecta o pino ao GND e a leitura vira LOW. Por isso, <strong>não precisamos de resistores extras nos botões</strong>.</p></div></section>
+      <section class="stage" data-stage="3" id="etapa-3"><header class="stagehead"><div class="num">03</div><div><p class="stagemeta">Montagem / Saídas</p><h2 class="stagetitle">Construa os dois canais de luz</h2><p class="stagesub">Cada LED deve ter o próprio resistor.</p></div><span class="stagecount" data-count="3">0/0</span></header><div class="tasks">
+        <label class="task"><input type="checkbox" data-task="3-1"><span class="taskbody">Ligue um pino <strong>GND do Arduino</strong> ao barramento negativo (−) da protoboard.</span></label>
+        <label class="task"><input type="checkbox" data-task="3-2"><span class="taskbody">Coloque o <strong>LED verde</strong> na protoboard, com cada terminal em uma linha elétrica diferente.</span></label>
+        <label class="task"><input type="checkbox" data-task="3-3"><span class="taskbody">Conecte o <strong>pino 8</strong> do Arduino a um <strong>resistor de 330 Ω</strong> e a outra extremidade do resistor ao <strong>ânodo (+) do LED verde</strong>.</span></label>
+        <label class="task"><input type="checkbox" data-task="3-4"><span class="taskbody">Conecte o <strong>cátodo (−) do LED verde</strong> ao barramento negativo da protoboard.</span></label>
+        <label class="task"><input type="checkbox" data-task="3-5"><span class="taskbody">Repita com o <strong>LED azul</strong>: pino <strong>9 → resistor de 330 Ω → ânodo (+)</strong> do LED azul.</span></label>
+        <label class="task"><input type="checkbox" data-task="3-6"><span class="taskbody">Conecte o <strong>cátodo (−) do LED azul</strong> ao barramento negativo.</span></label>
+      </div><div class="hint warning"><strong>⚠ Atenção aos LEDs</strong><p>Não conecte um LED diretamente ao pino do Arduino sem resistor. Se a luz não funcionar, verifique se o ânodo e o cátodo estão nas conexões corretas e se as pernas não caíram na mesma linha elétrica da protoboard.</p></div></section>
+      <section class="stage" data-stage="4" id="etapa-4"><header class="stagehead"><div class="num">04</div><div><p class="stagemeta">Montagem / Entradas</p><h2 class="stagetitle">Instale os dois pushbuttons</h2><p class="stagesub">Cada botão envia um comando diferente ao Arduino.</p></div><span class="stagecount" data-count="4">0/0</span></header><div class="tasks">
+        <label class="task"><input type="checkbox" data-task="4-1"><span class="taskbody">Coloque o <strong>botão B1</strong> atravessando a canaleta central da protoboard, de modo que os dois pares de terminais fiquem em lados opostos.</span></label>
+        <label class="task"><input type="checkbox" data-task="4-2"><span class="taskbody">Conecte um terminal de B1 ao <strong>GND</strong> e um terminal do par oposto ao <strong>pino digital 2</strong> do Arduino.</span></label>
+        <label class="task"><input type="checkbox" data-task="4-3"><span class="taskbody">Coloque o <strong>botão B2</strong> em outra região da protoboard, também atravessando a canaleta central.</span></label>
+        <label class="task"><input type="checkbox" data-task="4-4"><span class="taskbody">Conecte um terminal de B2 ao <strong>GND</strong> e um terminal do par oposto ao <strong>pino digital 3</strong>.</span></label>
+        <label class="task"><input type="checkbox" data-task="4-5"><span class="taskbody">Confirme que ambos os botões possuem um lado ligado ao <strong>GND</strong> e o outro ao <strong>pino de leitura correspondente</strong>. Eles não precisam de ligação ao 5 V.</span></label>
+      </div><div class="hint"><strong>🔎 Como evitar o erro mais comum?</strong><p>Alguns terminais do mesmo botão já são conectados internamente. Se você ligar GND e o pino digital ao <strong>mesmo par</strong>, o Arduino poderá ler o botão como pressionado o tempo todo. Use terminais de <strong>pares diferentes</strong>.</p></div></section>
+      <section class="stage" data-stage="5" id="etapa-5"><header class="stagehead"><div class="num">05</div><div><p class="stagemeta">Lógica / Arduino</p><h2 class="stagetitle">Escreva sua primeira programação</h2><p class="stagesub">Comandos simples: <code>pinMode</code>, <code>digitalRead</code>, <code>digitalWrite</code> e <code>if/else</code>.</p></div><span class="stagecount" data-count="5">0/0</span></header><div class="tasks">
+        <label class="task"><input type="checkbox" data-task="5-1"><span class="taskbody">No Tinkercad, clique em <strong>Código</strong> e escolha o modo <strong>Texto</strong> (confirme a troca de modo, se for solicitado).</span></label>
+        <label class="task"><input type="checkbox" data-task="5-2"><span class="taskbody">Declare quatro constantes para os pinos: <strong>B1 = 2</strong>, <strong>B2 = 3</strong>, <strong>verde = 8</strong> e <strong>azul = 9</strong>.</span></label>
+        <label class="task"><input type="checkbox" data-task="5-3"><span class="taskbody">Dentro do <code>setup()</code>, configure os dois LEDs como <code>OUTPUT</code> e os dois botões como <code>INPUT_PULLUP</code>.</span></label>
+        <label class="task"><input type="checkbox" data-task="5-4"><span class="taskbody">Dentro do <code>loop()</code>, use um <code>if/else</code> para ler B1: se <code>digitalRead(B1) == LOW</code>, acenda o LED verde; caso contrário, apague-o.</span></label>
+        <label class="task"><input type="checkbox" data-task="5-5"><span class="taskbody">Crie outro <code>if/else</code>, separado do primeiro, para fazer <strong>B2 controlar o LED azul</strong> da mesma forma.</span></label>
+        <label class="task"><input type="checkbox" data-task="5-6"><span class="taskbody">Revise o código no editor abaixo e <strong>passe-o para o Tinkercad</strong>. Se precisar de ajuda, abra o <strong>código de apoio</strong> após tentar.</span></label>
+      </div><div class="coding"><label for="code-area">Seu rascunho de código Arduino (editável)</label><textarea id="code-area" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" aria-describedby="code-info">// MISSÃO 04 — CENTRAL DE EFEITOS
+// Complete o programa com as instruções da etapa 5.
+
+const int B1 = 2;
+const int B2 = 3;
+const int LED_VERDE = 8;
+const int LED_AZUL = 9;
+
+void setup() {
+  // Configure os LEDs como OUTPUT.
+
+  // Configure os botões como INPUT_PULLUP.
+}
+
+void loop() {
+  // Se B1 estiver pressionado (LOW), acenda o LED verde.
+  // Caso contrário, apague o LED verde.
+
+  // Faça a mesma coisa com B2 e o LED azul.
+}</textarea><div class="codetools"><button class="codecopy" type="button" id="copy-btn">Copiar meu código</button><span class="status" id="code-info" aria-live="polite">Você pode editar aqui e copiar para o Tinkercad.</span></div><details><summary>Precisa de ajuda? Revelar um código completo que funciona</summary><p class="codeexplain">Este exemplo usa <strong>LOW</strong> para detectar o botão pressionado porque configuramos <code>INPUT_PULLUP</code>. Observe que existem <strong>dois if/else independentes</strong>, permitindo as duas luzes acesas ao mesmo tempo.</p><pre><code>const int B1 = 2;
+const int B2 = 3;
+const int LED_VERDE = 8;
+const int LED_AZUL = 9;
+
+void setup() {
+  pinMode(LED_VERDE, OUTPUT);
+  pinMode(LED_AZUL, OUTPUT);
+  pinMode(B1, INPUT_PULLUP);
+  pinMode(B2, INPUT_PULLUP);
+}
+
+void loop() {
+  if (digitalRead(B1) == LOW) {
+    digitalWrite(LED_VERDE, HIGH);
+  } else {
+    digitalWrite(LED_VERDE, LOW);
+  }
+
+  if (digitalRead(B2) == LOW) {
+    digitalWrite(LED_AZUL, HIGH);
+  } else {
+    digitalWrite(LED_AZUL, LOW);
+  }
+}</code></pre></details></div></section>
+      <section class="stage" data-stage="6" id="etapa-6"><header class="stagehead"><div class="num">06</div><div><p class="stagemeta">Verificação</p><h2 class="stagetitle">Teste como um técnico</h2><p class="stagesub">A missão termina quando seu circuito faz exatamente o que foi pedido.</p></div><span class="stagecount" data-count="6">0/0</span></header><div class="requirements"><div class="requirement"><span class="re-dot"></span><span><strong>Nenhum botão pressionado:</strong> os dois LEDs apagados.</span></div><div class="requirement"><span class="re-dot"></span><span><strong>Somente B1 pressionado:</strong> apenas o LED verde aceso.</span></div><div class="requirement"><span class="re-dot"></span><span><strong>Somente B2 pressionado:</strong> apenas o LED azul aceso.</span></div><div class="requirement"><span class="re-dot"></span><span><strong>B1 e B2 pressionados:</strong> os dois LEDs acesos.</span></div></div><div class="tasks">
+        <label class="task"><input type="checkbox" data-task="6-1"><span class="taskbody">Clique em <strong>Iniciar simulação</strong> no Tinkercad. Se houver erro de código, leia a mensagem e corrija-o.</span></label>
+        <label class="task"><input type="checkbox" data-task="6-2"><span class="taskbody">Confirme que <strong>os dois LEDs estão apagados</strong> quando nenhum botão é pressionado.</span></label>
+        <label class="task"><input type="checkbox" data-task="6-3"><span class="taskbody">Segure somente <strong>B1</strong> e confira que <strong>apenas o verde</strong> acende. Ao soltar B1, ele deve apagar.</span></label>
+        <label class="task"><input type="checkbox" data-task="6-4"><span class="taskbody">Segure somente <strong>B2</strong> e confira que <strong>apenas o azul</strong> acende. Ao soltar B2, ele deve apagar.</span></label>
+        <label class="task"><input type="checkbox" data-task="6-5"><span class="taskbody">Pressione <strong>B1 e B2 juntos</strong>: os dois LEDs devem acender ao mesmo tempo.</span></label>
+        <label class="task"><input type="checkbox" data-task="6-6"><span class="taskbody">Confira a organização da montagem e <strong>mostre o circuito e o código funcionando ao professor</strong>.</span></label>
+      </div><div class="hint"><strong>🛠 Se algo não funcionar</strong><p>Confira os números dos pinos, a orientação dos LEDs, os resistores em série, os terminais dos pushbuttons e se o código usa <code>INPUT_PULLUP</code> com <code>LOW</code> para botão pressionado. Corrija e teste novamente.</p></div></section>
+      <section class="finish" id="finish" aria-live="polite"><span class="finishicon" id="finish-icon">◇</span><div><h3 id="finish-title">Sua missão está em andamento</h3><p id="finish-description">Siga o checklist, teste a programação e apresente o funcionamento ao professor.</p></div></section>
+    </div>
+  </div>
+</main>
+<footer class="wrap foot"><span>Missão 04 · Aprender construindo</span><span>Montagem + programação básica · Sem questionário</span></footer>
+<script>
+(function () {
+  'use strict';
+  const KEY='tinkercad-missao04-central-efeitos-checklist-v1';
+  const CODE_KEY='tinkercad-missao04-central-efeitos-codigo-v1';
+  const tasks=[...document.querySelectorAll('[data-task]')];
+  let saved={};
+  try { saved=JSON.parse(localStorage.getItem(KEY)||'{}')||{}; } catch(e) { saved={}; }
+  tasks.forEach(input=>input.checked===false&&(input.checked=saved[input.dataset.task]===true));
+  function progress() {
+    const done=tasks.filter(el=>el.checked).length, total=tasks.length, pct=total?Math.round(done/total*100):0;
+    document.querySelector('#percent').textContent=pct+'%';
+    document.querySelector('#progress-fill').style.width=pct+'%';
+    document.querySelector('#progress-root').setAttribute('aria-valuenow',String(pct));
+    document.querySelector('#progress-text').textContent=done+' de '+total+' tarefas concluídas';
+    document.querySelectorAll('[data-stage]').forEach(stage=>{
+      const stageTasks=[...stage.querySelectorAll('[data-task]')], completed=stageTasks.filter(t=>t.checked).length,id=stage.dataset.stage;
+      document.querySelector('[data-count="'+id+'"]').textContent=completed+'/'+stageTasks.length;
+      const nav=document.querySelector('[data-nav="'+id+'"]'), all=completed===stageTasks.length;
+      nav.classList.toggle('done',all);
+      nav.querySelector('.navnum').textContent=all?'✓':String(id).padStart(2,'0');
+    });
+    const finished=done===total;
+    document.querySelector('#finish').classList.toggle('completed',finished);
+    document.querySelector('#finish-icon').textContent=finished?'✓':'◇';
+    document.querySelector('#finish-title').textContent=finished?'Missão concluída!':'Sua missão está em andamento';
+    document.querySelector('#finish-description').textContent=finished?'Todos os itens foram marcados. Mostre os LEDs e o código funcionando ao professor!':'Siga o checklist, teste a programação e apresente o funcionamento ao professor.';
+  }
+  tasks.forEach(input=>input.addEventListener('change',()=>{ saved[input.dataset.task]=input.checked; try{localStorage.setItem(KEY,JSON.stringify(saved));}catch(e){} progress(); }));
+  const area=document.querySelector('#code-area'), info=document.querySelector('#code-info');
+  try { const old=localStorage.getItem(CODE_KEY); if(old!==null) area.value=old; } catch(e){}
+  area.addEventListener('input',()=>{ try {localStorage.setItem(CODE_KEY,area.value); info.textContent='Rascunho salvo neste navegador.';}catch(e){info.textContent='Rascunho editado; salvamento local indisponível.';} });
+  document.querySelector('#copy-btn').addEventListener('click',async()=>{
+    try {
+      if(navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(area.value);
+      else { area.focus();area.select(); if(!document.execCommand('copy')) throw new Error('Não foi possível copiar automaticamente'); }
+      info.textContent='Código copiado! Cole no editor de texto do Tinkercad.';
+    } catch(e) { area.focus();area.select();info.textContent='Selecione o código e pressione Ctrl+C para copiar.'; }
+  });
+  document.querySelector('#print-btn').addEventListener('click',()=>window.print());
+  document.querySelector('#reset-btn').addEventListener('click',()=>{
+    if(!window.confirm('Apagar as marcações e reiniciar o progresso? O rascunho do código será mantido.')) return;
+    tasks.forEach(el=>el.checked=false);saved={};
+    try {localStorage.removeItem(KEY);}catch(e){}progress();
+  });
+  const pressed=new Set(), pointers=new Map();
+  function render(){
+    document.querySelector('#lamp-green').classList.toggle('on',pressed.has('b1'));
+    document.querySelector('#lamp-blue').classList.toggle('on',pressed.has('b2'));
+    document.querySelectorAll('[data-demo]').forEach(btn=>{
+      const isDown=pressed.has(btn.dataset.demo);
+      btn.classList.toggle('down',isDown);
+      btn.setAttribute('aria-pressed',String(isDown));
+    });
+  }
+  document.querySelectorAll('[data-demo]').forEach(btn=>{
+    const name=btn.dataset.demo;
+    btn.addEventListener('pointerdown',e=>{
+      if(e.pointerType==='mouse'&&e.button!==0)return;
+      e.preventDefault();btn.setPointerCapture(e.pointerId);
+      pointers.set(e.pointerId,name);pressed.add(name);render();
+    });
+    const release=e=>{
+      if(pointers.get(e.pointerId)!==name)return;
+      pointers.delete(e.pointerId);
+      if(![...pointers.values()].includes(name)) pressed.delete(name);
+      render();
+    };
+    btn.addEventListener('pointerup',release);
+    btn.addEventListener('pointercancel',release);
+    btn.addEventListener('lostpointercapture',release);
+    btn.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&!e.repeat){e.preventDefault();pressed.add(name);render();}});
+    btn.addEventListener('keyup',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pressed.delete(name);render();}});
+    btn.addEventListener('blur',()=>{if(![...pointers.values()].includes(name)){pressed.delete(name);render();}});
+  });
+  window.addEventListener('blur',()=>{pressed.clear();pointers.clear();render();});
+  progress();
+})();
+</script>
+</body>
+</html>
