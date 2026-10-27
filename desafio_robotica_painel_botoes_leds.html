@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b1020" />
+  <meta name="description" content="Atividade de robótica com checklist interativo: monte um painel de comandos com pushbuttons e LEDs no Tinkercad, sem programação." />
+  <title>Missão 03 — Painel de Comandos | Robótica</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg:#0a0e1b; --surface:#131a2d; --surface-2:#182239; --surface-3:#1e2b46;
+      --line:rgba(165,186,235,.14); --line-strong:rgba(165,186,235,.24);
+      --text:#f1f5ff; --muted:#a3b0ca; --quiet:#71809e;
+      --mint:#48e6b2; --teal:#26bbbc; --blue:#73a8ff; --amber:#ffd27c; --pink:#fc8098;
+      --shadow:0 24px 70px rgba(0,0,0,.28);
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:var(--bg); font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color:var(--text); line-height:1.55; }
+    body::before { content:""; pointer-events:none; position:fixed; inset:0; z-index:-1; background:radial-gradient(ellipse at 15% -10%, rgba(36,98,120,.2), transparent 40%),radial-gradient(ellipse at 90% 20%,rgba(68,72,155,.17),transparent 38%); }
+    button,input { font:inherit; }
+    button { cursor:pointer; }
+    a { color:inherit; }
+    .shell { width:min(1180px, calc(100% - 48px)); margin:0 auto; }
+    .topbar { min-height:78px; display:flex; align-items:center; justify-content:space-between; gap:20px; border-bottom:1px solid var(--line); }
+    .brand { display:flex; gap:12px; align-items:center; text-decoration:none; font-size:14px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+    .brand-mark { width:36px; height:36px; border:1px solid rgba(73,231,181,.36); background:linear-gradient(145deg,#16464b,#1b2d43); border-radius:11px; display:grid; place-items:center; color:#74e9bf; }
+    .top-meta { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+    .top-badge { border:1px solid var(--line); border-radius:30px; color:#b9c7e1; padding:7px 12px; font-size:12px; font-weight:650; }
+    .top-badge.accent { background:rgba(72,230,178,.09); color:#a6ffda; border-color:rgba(72,230,178,.26); }
+    .hero { padding:64px 0 42px; display:grid; grid-template-columns:minmax(0,1.12fr) minmax(300px,.88fr); align-items:center; gap:50px; }
+    .eyebrow { font-size:12px; text-transform:uppercase; letter-spacing:.2em; font-weight:850; color:var(--mint); margin:0 0 17px; }
+    h1 { margin:0; font-size:clamp(42px,5.2vw,71px); line-height:1.05; letter-spacing:-.055em; max-width:630px; }
+    h1 .gradient { background:linear-gradient(95deg,#81ebc8 5%,#83bbf9 68%,#bba7ff); background-clip:text; -webkit-background-clip:text; color:transparent; }
+    .lead { font-size:16px; line-height:1.78; color:var(--muted); max-width:600px; margin:22px 0 22px; }
+    .facts { display:flex; gap:8px; flex-wrap:wrap; }
+    .fact { background:var(--surface); border:1px solid var(--line); padding:7px 11px; color:#b8c9e4; border-radius:9px; font-size:12px; font-weight:650; }
+    .goalpanel { border:1px solid rgba(148,175,221,.2); border-radius:22px; background:linear-gradient(155deg,#1a2741,#121a30 72%); box-shadow:var(--shadow); padding:24px; position:relative; overflow:hidden; }
+    .goalpanel::before { content:""; position:absolute; pointer-events:none; width:160px; height:160px; right:-70px; top:-70px; background:radial-gradient(circle,rgba(72,230,178,.17),transparent 70%); }
+    .panel-top { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.16em; display:flex; justify-content:space-between; gap:10px; align-items:center; font-weight:800; }
+    .panel-top span:last-child { color:var(--mint); }
+    .panel-leds { margin:29px 0 24px; display:grid; grid-template-columns:repeat(3,1fr); gap:12px; text-align:center; }
+    .led-slot { background:rgba(9,15,29,.55); border:1px solid var(--line); border-radius:14px; padding:19px 6px 13px; }
+    .led { display:block; width:41px; height:41px; border-radius:50%; margin:0 auto 12px; background:#244238; border:5px solid rgba(255,255,255,.1); box-shadow:inset 0 5px 11px rgba(0,0,0,.36); transition:all .12s ease; }
+    .led.green.on { background:#41fab2; box-shadow:0 0 18px #23e6a1b5,0 0 36px #23e6a155,inset 0 1px 12px #edfff4; }
+    .led.blue { background:#263b60; }
+    .led.blue.on { background:#6dabff; box-shadow:0 0 18px #5c9bffad,0 0 36px #5c9bff55,inset 0 1px 12px #eff7ff; }
+    .led.red { background:#5a2a39; }
+    .led.red.on { background:#ff667b; box-shadow:0 0 18px #ff526db5,0 0 36px #ff526d55,inset 0 1px 12px #fff1f2; }
+    .led-caption { font-size:12px; font-weight:700; color:#b0bfd9; }
+    .panel-controls { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+    .demo-btn { touch-action:none; min-height:52px; border-radius:12px; border:1px solid rgba(176,197,238,.28); color:#d5e1f7; background:linear-gradient(#354363,#26344f); font-weight:850; font-size:13px; user-select:none; -webkit-user-select:none; box-shadow:0 4px 0 #10192d; }
+    .demo-btn.pressed { transform:translateY(3px); box-shadow:0 1px 0 #10192d; background:linear-gradient(#48816f,#2a605d); color:white; border-color:#79f0ce; }
+    .panel-note { color:var(--quiet); font-size:11px; margin:17px 0 0; text-align:center; }
+    .mission-strip { background:linear-gradient(100deg,rgba(65,230,169,.1),rgba(89,154,255,.06)); border:1px solid rgba(73,230,179,.19); border-radius:14px; display:flex; align-items:flex-start; gap:14px; padding:20px 24px; margin-bottom:36px; }
+    .mission-icon { color:var(--mint); font-size:21px; flex:none; }
+    .mission-strip strong { display:block; font-size:15px; margin-bottom:3px; }
+    .mission-strip p { margin:0; font-size:14px; color:var(--muted); line-height:1.65; }
+    .layout { display:grid; grid-template-columns:290px minmax(0,1fr); align-items:start; gap:27px; padding-bottom:90px; }
+    aside { position:sticky; top:20px; }
+    .side-card { background:rgba(20,28,47,.96); border:1px solid var(--line); border-radius:18px; padding:23px; box-shadow:0 18px 48px rgba(0,0,0,.11); }
+    .progress-top { display:flex; justify-content:space-between; gap:15px; align-items:center; }
+    .small-overline { color:var(--quiet); letter-spacing:.13em; font-size:11px; font-weight:850; text-transform:uppercase; }
+    .progress-num { color:var(--mint); font-size:25px; font-weight:850; letter-spacing:-.04em; }
+    .progress-bar { height:9px; width:100%; border-radius:999px; background:#27334d; overflow:hidden; margin:14px 0 9px; }
+    .progress-fill { width:0%; height:100%; background:linear-gradient(90deg,#32c9a6,#69dfe5); border-radius:999px; transition:width .25s; }
+    .progress-note { font-size:12px; color:var(--muted); margin:0; }
+    .side-heading { color:var(--quiet); letter-spacing:.14em; text-transform:uppercase; font-size:10px; font-weight:850; margin:27px 0 11px; }
+    .stage-links { display:grid; gap:5px; }
+    .stage-link { display:flex; align-items:center; gap:10px; padding:11px 9px; text-decoration:none; border-radius:9px; color:#a7b9d5; font-size:12px; font-weight:700; transition:.15s; }
+    .stage-link:hover, .stage-link:focus-visible { background:#23314d; color:white; outline:none; }
+    .side-circle { flex:none; display:grid; place-items:center; width:25px; height:25px; border:1px solid #3e4d6a; color:#9db1d1; border-radius:50%; font-size:11px; }
+    .stage-link.done .side-circle { border-color:rgba(72,230,178,.65); background:rgba(72,230,178,.16); color:#70f0c8; }
+    .stage-link.done { color:#c2e5db; }
+    .side-actions { display:flex; flex-direction:column; gap:9px; margin-top:24px; }
+    .action { padding:10px 14px; border-radius:10px; border:1px solid var(--line-strong); font-weight:750; font-size:12px; background:#263752; color:#e8f5ff; transition:.15s; }
+    .action:hover { border-color:rgba(72,230,178,.5); }
+    .action.ghost { background:transparent; color:#a7b9d5; }
+    .side-footer { text-align:center; font-size:11px; color:var(--quiet); margin:14px 0 0; }
+    .content { min-width:0; }
+    .stage { scroll-margin-top:25px; border:1px solid var(--line); background:rgba(19,27,47,.93); border-radius:18px; overflow:hidden; margin-bottom:18px; box-shadow:0 14px 35px rgba(0,0,0,.09); }
+    .stage-head { display:flex; align-items:start; gap:15px; padding:24px 26px 20px; border-bottom:1px solid var(--line); }
+    .stage-number { background:linear-gradient(145deg,#233a4c,#1f2c4b); width:44px; height:44px; border-radius:13px; color:#8beccf; font-size:18px; font-weight:850; display:grid; place-items:center; flex:none; border:1px solid #3b536d; }
+    .stage-meta { color:var(--mint); text-transform:uppercase; font-size:10px; letter-spacing:.15em; font-weight:850; margin:0 0 3px; }
+    .stage-title { font-size:21px; line-height:1.25; font-weight:850; margin:0; letter-spacing:-.027em; }
+    .stage-sub { margin:7px 0 0; font-size:13px; color:var(--muted); }
+    .count-pill { flex:none; margin-left:auto; font-size:11px; border:1px solid var(--line); color:#b0bfda; padding:5px 10px; border-radius:999px; white-space:nowrap; }
+    .tasks { padding:10px 15px 13px; }
+    .task { position:relative; display:flex; align-items:start; gap:14px; padding:14px 13px; border-radius:11px; cursor:pointer; transition:background .15s; }
+    .task:hover { background:rgba(133,175,219,.055); }
+    .task input { flex:none; margin:3px 0 0; appearance:none; width:22px; height:22px; border-radius:7px; border:1.7px solid #627491; background:#182339; transition:.15s; cursor:pointer; display:grid; place-items:center; }
+    .task input:focus-visible { outline:3px solid rgba(92,161,249,.6); outline-offset:3px; }
+    .task input:checked { border-color:#56e9bd; background:#2bbd9b; }
+    .task input:checked::after { content:"✓"; font-size:15px; font-weight:900; line-height:1; color:#092526; }
+    .task-body { display:block; color:#e4ebfa; font-size:13.5px; line-height:1.62; }
+    .task-body strong { color:white; font-weight:750; }
+    .task:has(input:checked) .task-body { color:#899bb6; }
+    .task:has(input:checked) .task-body strong { color:#a9b8d1; }
+    .help { margin:2px 26px 24px; background:#1b2940; border-left:3px solid #82bbf1; border-radius:0 12px 12px 0; padding:15px 16px; }
+    .help strong { display:block; color:#c0e0ff; font-size:12px; margin-bottom:4px; }
+    .help p { font-size:12px; color:#b6c4de; margin:0; line-height:1.7; }
+    .help.warn { border-color:#efbd75; background:#342a2b; }
+    .help.warn strong { color:#ffd6a0; }
+    .help.warn p { color:#edcfc6; }
+    .parts { display:flex; flex-wrap:wrap; gap:8px; padding:21px 26px 0; }
+    .part { padding:8px 10px; border:1px solid var(--line); border-radius:10px; font-size:12px; color:#c6d5ec; background:#19243a; }
+    .part b { color:var(--mint); font-weight:850; }
+    .checks { padding:16px 26px 24px; display:grid; gap:10px; }
+    .checkline { display:flex; align-items:start; gap:11px; padding:12px 14px; border:1px solid var(--line); background:#17233b; border-radius:10px; }
+    .checkline .dot { width:9px; height:9px; background:var(--mint); box-shadow:0 0 10px #48e6b266; border-radius:50%; flex:none; margin-top:7px; }
+    .checkline span { color:#c6d3e8; font-size:12.5px; }
+    .success { border:1px solid rgba(72,230,178,.28); background:linear-gradient(130deg,rgba(49,168,133,.12),rgba(35,64,85,.35)); border-radius:18px; padding:29px 27px; display:flex; align-items:center; gap:16px; margin-top:22px; }
+    .success-icon { width:49px; height:49px; border:1px solid rgba(72,230,178,.35); display:grid; place-items:center; border-radius:16px; font-size:23px; color:var(--mint); flex:none; }
+    .success h3 { font-size:20px; margin:0 0 4px; }
+    .success p { margin:0; color:#b2c8d7; font-size:13px; }
+    .success[data-complete="true"] { border-color:#4ce5b1; box-shadow:0 0 36px rgba(65,240,183,.09); }
+    .pagefoot { padding:25px 0 50px; color:var(--quiet); border-top:1px solid var(--line); font-size:12px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .pagefoot a { color:#a6d4f9; text-decoration:none; }
+    @media (max-width:980px) { .hero { gap:28px; } .layout { grid-template-columns:235px 1fr; gap:18px; } .side-card{padding:16px;} .stage-head {padding:21px;} .tasks{padding:8px;} .help{margin-left:21px;margin-right:21px;} }
+    @media (max-width:740px) { .shell {width:min(100% - 28px,620px);} .topbar {min-height:66px;} .top-meta .top-badge:not(.accent){display:none;} .hero {grid-template-columns:1fr;padding:37px 0 26px;gap:25px;} .lead {font-size:14px;margin-top:17px;} h1{font-size:clamp(39px,9vw,55px);} .goalpanel {max-width:100%;} .mission-strip {padding:17px;margin-bottom:20px;} .layout {grid-template-columns:1fr;gap:18px;} aside{position:static;} .side-card {padding:18px;} .stage-links{display:grid;grid-template-columns:1fr 1fr;gap:3px 7px;} .side-actions{flex-direction:row;} .side-actions button{flex:1;} .stage-head{padding:19px 17px;gap:10px;} .stage-title{font-size:18px;} .stage-number {width:39px;height:39px;} .count-pill {font-size:10px;padding:4px 6px;} .pagefoot{align-items:flex-start;flex-direction:column;} }
+    @media (max-width:390px){ .stage-links{grid-template-columns:1fr;} .panel-leds{gap:6px;} .led-slot{padding:17px 5px 11px;} .stage-head{flex-wrap:wrap;} .count-pill{margin-left:49px;} }
+    @media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto;} *,*::before,*::after {transition:none!important;animation:none!important;} }
+    @media print { :root{color-scheme:light;} body{background:#fff;color:#111827;font-size:11pt;} body::before{display:none;} .shell{width:100%;max-width:none;} .topbar{display:none;} .hero{display:block;padding:15px 0;} h1, h1 .gradient{color:#161b26!important;background:none!important;font-size:32pt;} .lead,.mission-strip p,.stage-sub,.task-body,.help p,.checkline span,.progress-note{color:#303e56;} .goalpanel,aside,.side-actions,.pagefoot{display:none;} .mission-strip,.stage,.success{background:white;border:1px solid #aeb8c8;box-shadow:none;} .layout{display:block;} .stage{break-inside:avoid;page-break-inside:avoid;margin-bottom:13px;} .stage-head{padding:14px 18px;} .stage-title{color:#111827;} .stage-number{color:#1d5362;border:1px solid #b6c8cf;background:#f4f6fa;} .stage-meta{color:#236e5f;} .task-body,.task-body strong{color:#111827!important;} .task:has(input:checked) .task-body{text-decoration:none;} .task{padding:7px 12px;} .task input{appearance:auto; accent-color:#1e977c; border:none;background:none;margin-top:5px;} .help,.help.warn {background:#f4f6fa;border-left:3px solid #555;} .help strong,.help.warn strong{color:#203249;} .parts{padding:12px 18px 0;} .part{background:#fff;color:#333;border:1px solid #bbb;} .part b{color:#186a56;} .checkline{background:#fff;border:1px solid #ddd;} .checkline .dot{background:#346b5d;box-shadow:none;} .success-icon {color:#16674e;} .success h3{color:#111827;} }
+  </style>
+</head>
+<body>
+  <header class="shell topbar">
+    <a class="brand" href="#inicio" aria-label="Voltar ao início"><span class="brand-mark" aria-hidden="true">◈</span> Laboratório de Robótica</a>
+    <div class="top-meta"><span class="top-badge">Atividade prática 03</span><span class="top-badge accent">● Sem programação</span></div>
+  </header>
+
+  <main class="shell" id="inicio">
+    <section class="hero" aria-labelledby="titulo">
+      <div>
+        <p class="eyebrow">Missão 03 / Eletrônica na prática</p>
+        <h1 id="titulo">Painel de <span class="gradient">Comandos</span></h1>
+        <p class="lead">Construa um painel com luzes que respondem ao toque de botões. Você receberá apenas instruções escritas: <strong style="color:#e4f2fc">interprete, monte, teste e descubra como fazer funcionar.</strong></p>
+        <div class="facts"><span class="fact">◉ Tinkercad</span><span class="fact">◌ Protoboard</span><span class="fact">⌁ Fonte 5 V</span><span class="fact">✦ LEDs + Pushbuttons</span></div>
+      </div>
+      <div class="goalpanel" aria-label="Demonstração do comportamento que o circuito deverá apresentar">
+        <div class="panel-top"><span>Prévia da missão</span><span>● Interativo</span></div>
+        <div class="panel-leds">
+          <div class="led-slot"><span class="led green" id="led-g" aria-hidden="true"></span><span class="led-caption">Verde</span></div>
+          <div class="led-slot"><span class="led blue" id="led-b" aria-hidden="true"></span><span class="led-caption">Azul</span></div>
+          <div class="led-slot"><span class="led red" id="led-r" aria-hidden="true"></span><span class="led-caption">Vermelho</span></div>
+        </div>
+        <div class="panel-controls" aria-label="Pressione e segure um ou mais botões para visualizar o resultado esperado">
+          <button class="demo-btn" type="button" data-demo="b1" aria-label="Segurar botão B1">B1</button>
+          <button class="demo-btn" type="button" data-demo="b2" aria-label="Segurar botão B2">B2</button>
+          <button class="demo-btn" type="button" data-demo="b3" aria-label="Segurar botão B3">B3</button>
+          <button class="demo-btn" type="button" data-demo="b4" aria-label="Segurar botão B4">B4</button>
+        </div>
+        <p class="panel-note">Experimente segurar B1 ou B2. O vermelho exige B3 e B4 juntos. Esta prévia mostra o resultado, não a montagem.</p>
+      </div>
+    </section>
+
+    <section class="mission-strip" aria-label="Objetivo da missão"><span class="mission-icon" aria-hidden="true">✧</span><div><strong>O que você precisa construir?</strong><p>Um LED verde acionado pelo botão B1, um LED azul pelo botão B2 e um LED vermelho que <strong>só acende quando B3 e B4 estão pressionados ao mesmo tempo</strong>. Ao soltar os botões, as luzes correspondentes devem apagar. Tudo isso <strong>sem Arduino e sem código</strong>.</p></div></section>
+
+    <div class="layout">
+      <aside aria-label="Acompanhamento da atividade">
+        <div class="side-card">
+          <div class="progress-top"><span class="small-overline">Seu progresso</span><span class="progress-num" id="pct">0%</span></div>
+          <div class="progress-bar" role="progressbar" aria-label="Progresso da atividade" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="bar-root"><div class="progress-fill" id="bar"></div></div>
+          <p class="progress-note" id="progress-text">0 de 0 tarefas concluídas</p>
+          <div class="side-heading">Etapas da missão</div>
+          <nav class="stage-links" aria-label="Ir para uma etapa">
+            <a href="#etapa-1" class="stage-link" data-nav="1"><span class="side-circle">01</span><span>Preparação</span></a>
+            <a href="#etapa-2" class="stage-link" data-nav="2"><span class="side-circle">02</span><span>Entenda os botões</span></a>
+            <a href="#etapa-3" class="stage-link" data-nav="3"><span class="side-circle">03</span><span>Comando verde</span></a>
+            <a href="#etapa-4" class="stage-link" data-nav="4"><span class="side-circle">04</span><span>Comando azul</span></a>
+            <a href="#etapa-5" class="stage-link" data-nav="5"><span class="side-circle">05</span><span>Dupla segurança</span></a>
+            <a href="#etapa-6" class="stage-link" data-nav="6"><span class="side-circle">06</span><span>Testes finais</span></a>
+          </nav>
+          <div class="side-actions"><button type="button" class="action" id="print-btn">⎙ Imprimir</button><button type="button" class="action ghost" id="reset-btn">↺ Reiniciar</button></div>
+          <p class="side-footer">O progresso fica salvo neste navegador.</p>
+        </div>
+      </aside>
+
+      <div class="content">
+        <section class="stage" id="etapa-1" data-stage="1">
+          <header class="stage-head"><div class="stage-number">01</div><div><p class="stage-meta">Organização</p><h2 class="stage-title">Prepare os materiais</h2><p class="stage-sub">Comece criando o ambiente de trabalho no Tinkercad.</p></div><span class="count-pill" data-count="1">0/0</span></header>
+          <div class="parts" aria-label="Lista de materiais"><span class="part"><b>1×</b> protoboard</span><span class="part"><b>1×</b> fonte 5 V</span><span class="part"><b>4×</b> pushbuttons</span><span class="part"><b>3×</b> LEDs (verde, azul e vermelho)</span><span class="part"><b>3×</b> resistores de 330 Ω</span><span class="part">Fios</span></div>
+          <div class="tasks">
+            <label class="task"><input type="checkbox" data-task="1-1" /><span class="task-body">Acesse o <strong>Tinkercad</strong>, abra a seção <strong>Circuitos</strong> e crie um novo projeto.</span></label>
+            <label class="task"><input type="checkbox" data-task="1-2" /><span class="task-body">Adicione uma <strong>protoboard</strong> e uma <strong>fonte de alimentação</strong>. Configure a fonte para <strong>5 V</strong>.</span></label>
+            <label class="task"><input type="checkbox" data-task="1-3" /><span class="task-body">Posicione <strong>4 botões de pressão (pushbuttons)</strong>, <strong>3 LEDs</strong> (verde, azul e vermelho) e <strong>3 resistores</strong> na área de montagem.</span></label>
+            <label class="task"><input type="checkbox" data-task="1-4" /><span class="task-body">Configure cada resistor para <strong>330 Ω</strong> e organize os componentes antes de realizar qualquer conexão.</span></label>
+            <label class="task"><input type="checkbox" data-task="1-5" /><span class="task-body">Ligue o terminal <strong>positivo (+)</strong> da fonte ao barramento positivo da protoboard e o <strong>negativo (−)</strong> ao barramento negativo.</span></label>
+          </div>
+          <div class="help warn"><strong>⚠ Atenção à fonte</strong><p>Use apenas 5 V nesta atividade. Não ligue nenhum LED diretamente à fonte: cada LED precisa de seu próprio resistor de proteção.</p></div>
+        </section>
+
+        <section class="stage" id="etapa-2" data-stage="2">
+          <header class="stage-head"><div class="stage-number">02</div><div><p class="stage-meta">Conhecimento essencial</p><h2 class="stage-title">Descubra como funciona um pushbutton</h2><p class="stage-sub">Entender os terminais evita os erros mais comuns.</p></div><span class="count-pill" data-count="2">0/0</span></header>
+          <div class="tasks">
+            <label class="task"><input type="checkbox" data-task="2-1" /><span class="task-body">Observe um pushbutton no Tinkercad. Ele possui <strong>4 terminais</strong>, organizados em <strong>dois pares</strong>.</span></label>
+            <label class="task"><input type="checkbox" data-task="2-2" /><span class="task-body">Entenda o comportamento: <strong>sem pressionar</strong>, o botão deixa o caminho elétrico interrompido; <strong>ao pressionar</strong>, ele conecta os dois lados internos e permite a passagem da corrente.</span></label>
+            <label class="task"><input type="checkbox" data-task="2-3" /><span class="task-body">Identifique quais terminais já fazem parte de um mesmo par. <strong>Não use dois terminais que já estão conectados internamente</strong> como se fossem entrada e saída do interruptor.</span></label>
+            <label class="task"><input type="checkbox" data-task="2-4" /><span class="task-body">Posicione os pushbuttons <strong>atravessando a canaleta central da protoboard</strong>, com dois terminais de cada lado do vão. Isso ajuda a separar as conexões.</span></label>
+            <label class="task"><input type="checkbox" data-task="2-5" /><span class="task-body">Observe os LEDs: o <strong>ânodo (+)</strong> recebe a corrente e o <strong>cátodo (−)</strong> deve ficar voltado ao caminho do negativo da fonte.</span></label>
+          </div>
+          <div class="help"><strong>💡 Dica sobre os 4 pinos</strong><p>Em um pushbutton comum, dois pinos de um mesmo lado do corpo já estão ligados entre si. O par do lado oposto só se conecta ao primeiro quando o botão é apertado. Use um lado para a entrada de energia e o outro para a saída. Se um LED ficar aceso sem pressionar, revise os terminais escolhidos.</p></div>
+        </section>
+
+        <section class="stage" id="etapa-3" data-stage="3">
+          <header class="stage-head"><div class="stage-number">03</div><div><p class="stage-meta">Primeiro comando</p><h2 class="stage-title">Acione o LED verde com B1</h2><p class="stage-sub">Uma luz, um botão e um resistor.</p></div><span class="count-pill" data-count="3">0/0</span></header>
+          <div class="tasks">
+            <label class="task"><input type="checkbox" data-task="3-1" /><span class="task-body">Escolha um pushbutton para ser o <strong>B1</strong> e posicione o LED verde próximo a ele.</span></label>
+            <label class="task"><input type="checkbox" data-task="3-2" /><span class="task-body">Leve um fio do <strong>barramento positivo (+)</strong> para um terminal de um dos lados de B1.</span></label>
+            <label class="task"><input type="checkbox" data-task="3-3" /><span class="task-body">Em um terminal do <strong>outro lado de B1</strong>, conecte um fio que seguirá até um <strong>resistor de 330 Ω</strong>.</span></label>
+            <label class="task"><input type="checkbox" data-task="3-4" /><span class="task-body">Conecte a extremidade livre desse resistor ao <strong>ânodo (+)</strong> do LED verde.</span></label>
+            <label class="task"><input type="checkbox" data-task="3-5" /><span class="task-body">Ligue o <strong>cátodo (−)</strong> do LED verde ao barramento negativo (−).</span></label>
+            <label class="task"><input type="checkbox" data-task="3-6" /><span class="task-body">Inicie a simulação: o LED verde deve <strong>acender somente enquanto B1 estiver pressionado</strong>. Solte B1 e confirme que ele apaga.</span></label>
+          </div>
+          <div class="help"><strong>🔎 Se não acender</strong><p>Pare a simulação e confira a polaridade do LED, a alimentação, as linhas da protoboard e os lados de entrada/saída do pushbutton.</p></div>
+        </section>
+
+        <section class="stage" id="etapa-4" data-stage="4">
+          <header class="stage-head"><div class="stage-number">04</div><div><p class="stage-meta">Segundo comando</p><h2 class="stage-title">Adicione o LED azul com B2</h2><p class="stage-sub">Crie um segundo caminho, separado do verde.</p></div><span class="count-pill" data-count="4">0/0</span></header>
+          <div class="tasks">
+            <label class="task"><input type="checkbox" data-task="4-1" /><span class="task-body">Escolha outro pushbutton e identifique-o como <strong>B2</strong>. Posicione o LED azul em uma região livre da protoboard.</span></label>
+            <label class="task"><input type="checkbox" data-task="4-2" /><span class="task-body">Conecte o <strong>barramento positivo (+)</strong> a um lado de B2.</span></label>
+            <label class="task"><input type="checkbox" data-task="4-3" /><span class="task-body">Do outro lado de B2, faça a ligação com um <strong>novo resistor de 330 Ω</strong> e, em seguida, com o <strong>ânodo (+)</strong> do LED azul.</span></label>
+            <label class="task"><input type="checkbox" data-task="4-4" /><span class="task-body">Conecte o <strong>cátodo (−)</strong> do LED azul ao barramento negativo (−).</span></label>
+            <label class="task"><input type="checkbox" data-task="4-5" /><span class="task-body">Teste B1 e B2: cada botão deve acender apenas o próprio LED. Ao pressionar os dois juntos, <strong>verde e azul acendem ao mesmo tempo</strong>.</span></label>
+          </div>
+          <div class="help"><strong>💡 Lembrete</strong><p>Os dois circuitos podem compartilhar os barramentos positivo e negativo, mas precisam ter botões e resistores próprios. Não ligue os LEDs um depois do outro.</p></div>
+        </section>
+
+        <section class="stage" id="etapa-5" data-stage="5">
+          <header class="stage-head"><div class="stage-number">05</div><div><p class="stage-meta">Desafio principal</p><h2 class="stage-title">Construa a trava de segurança</h2><p class="stage-sub">O LED vermelho só pode acender com dois botões apertados juntos.</p></div><span class="count-pill" data-count="5">0/0</span></header>
+          <div class="tasks">
+            <label class="task"><input type="checkbox" data-task="5-1" /><span class="task-body">Reserve os dois pushbuttons restantes como <strong>B3</strong> e <strong>B4</strong>. Posicione o LED vermelho próximo a eles.</span></label>
+            <label class="task"><input type="checkbox" data-task="5-2" /><span class="task-body">Conecte o barramento <strong>positivo (+)</strong> a um dos lados de <strong>B3</strong>.</span></label>
+            <label class="task"><input type="checkbox" data-task="5-3" /><span class="task-body">Do lado oposto de B3, leve um fio até um dos lados de <strong>B4</strong>. Assim, a energia precisará passar primeiro por B3 e depois por B4.</span></label>
+            <label class="task"><input type="checkbox" data-task="5-4" /><span class="task-body">Do lado oposto de B4, faça uma conexão com o <strong>terceiro resistor de 330 Ω</strong>.</span></label>
+            <label class="task"><input type="checkbox" data-task="5-5" /><span class="task-body">Conecte o resistor ao <strong>ânodo (+)</strong> do LED vermelho e leve o <strong>cátodo (−)</strong> ao barramento negativo.</span></label>
+            <label class="task"><input type="checkbox" data-task="5-6" /><span class="task-body">Teste pressionando <strong>apenas B3</strong>: o LED vermelho deve continuar apagado. Repita pressionando <strong>apenas B4</strong>.</span></label>
+            <label class="task"><input type="checkbox" data-task="5-7" /><span class="task-body">Agora pressione <strong>B3 e B4 simultaneamente</strong>. O LED vermelho deve acender. Solte qualquer um dos dois e confira se ele apaga.</span></label>
+          </div>
+          <div class="help warn"><strong>⚠ Dica sobre ligação em série</strong><p>Para que os dois botões sejam obrigatórios, a corrente deve atravessar B3 <strong>e depois</strong> B4 pelo mesmo caminho. Se você conectar os botões em caminhos alternativos, bastará apertar um deles — e a missão não estará correta.</p></div>
+        </section>
+
+        <section class="stage" id="etapa-6" data-stage="6">
+          <header class="stage-head"><div class="stage-number">06</div><div><p class="stage-meta">Validação</p><h2 class="stage-title">Passe na inspeção final</h2><p class="stage-sub">Marque cada teste somente depois de conferir na simulação.</p></div><span class="count-pill" data-count="6">0/0</span></header>
+          <div class="checks" aria-label="Comportamento esperado do circuito">
+            <div class="checkline"><span class="dot"></span><span><strong>Somente B1:</strong> acende o LED verde.</span></div>
+            <div class="checkline"><span class="dot"></span><span><strong>Somente B2:</strong> acende o LED azul.</span></div>
+            <div class="checkline"><span class="dot"></span><span><strong>Somente B3 ou somente B4:</strong> LED vermelho permanece apagado.</span></div>
+            <div class="checkline"><span class="dot"></span><span><strong>B3 + B4:</strong> acende o LED vermelho.</span></div>
+          </div>
+          <div class="tasks">
+            <label class="task"><input type="checkbox" data-task="6-1" /><span class="task-body">Confirme que, com <strong>todos os botões soltos</strong>, os três LEDs ficam apagados.</span></label>
+            <label class="task"><input type="checkbox" data-task="6-2" /><span class="task-body">Pressione somente <strong>B1</strong>: apenas o LED verde deve acender.</span></label>
+            <label class="task"><input type="checkbox" data-task="6-3" /><span class="task-body">Pressione somente <strong>B2</strong>: apenas o LED azul deve acender.</span></label>
+            <label class="task"><input type="checkbox" data-task="6-4" /><span class="task-body">Pressione <strong>B3 sozinho</strong> e depois <strong>B4 sozinho</strong>: o LED vermelho deve ficar apagado em ambos os casos.</span></label>
+            <label class="task"><input type="checkbox" data-task="6-5" /><span class="task-body">Pressione <strong>B3 e B4 juntos</strong>: o LED vermelho deve acender e apagar quando qualquer um for solto.</span></label>
+            <label class="task"><input type="checkbox" data-task="6-6" /><span class="task-body">Pressione <strong>B1, B2, B3 e B4 juntos</strong>: os três LEDs devem acender ao mesmo tempo.</span></label>
+            <label class="task"><input type="checkbox" data-task="6-7" /><span class="task-body">Organize os fios, confira os três resistores e <strong>mostre o circuito em funcionamento ao professor</strong>.</span></label>
+          </div>
+        </section>
+
+        <section class="success" id="finish" data-complete="false" aria-live="polite"><div class="success-icon" id="finish-icon" aria-hidden="true">◇</div><div><h3 id="finish-title">Sua missão está em andamento</h3><p id="finish-text">Conclua todas as etapas e demonstre o circuito para finalizar o desafio.</p></div></section>
+      </div>
+    </div>
+  </main>
+  <footer class="shell pagefoot"><span>Robótica • Aprender construindo • Missão 03</span><span>Sem código Arduino. Sem questionário. Apenas montagem e testes.</span></footer>
+
+  <script>
+    (function () {
+      const STORAGE_KEY = 'robotica-missao03-painel-botoes-v1';
+      const tasks = Array.from(document.querySelectorAll('[data-task]'));
+      let saved = {};
+      try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') || {}; } catch (_) { saved = {}; }
+      tasks.forEach(input => { input.checked = saved[input.dataset.task] === true; });
+      function update() {
+        const completed = tasks.filter(t => t.checked).length;
+        const total = tasks.length;
+        const percent = Math.round(completed / total * 100);
+        document.querySelector('#pct').textContent = percent + '%';
+        document.querySelector('#bar').style.width = percent + '%';
+        document.querySelector('#bar-root').setAttribute('aria-valuenow', String(percent));
+        document.querySelector('#progress-text').textContent = completed + ' de ' + total + ' tarefas concluídas';
+        document.querySelectorAll('[data-stage]').forEach(stage => {
+          const stageTasks = Array.from(stage.querySelectorAll('[data-task]'));
+          const done = stageTasks.filter(t => t.checked).length;
+          const id = stage.dataset.stage;
+          const pill = document.querySelector('[data-count="' + id + '"]');
+          const nav = document.querySelector('[data-nav="' + id + '"]');
+          pill.textContent = done + '/' + stageTasks.length;
+          nav.classList.toggle('done', done === stageTasks.length);
+          nav.querySelector('.side-circle').textContent = done === stageTasks.length ? '✓' : String(id).padStart(2, '0');
+        });
+        const finish = document.querySelector('#finish');
+        finish.dataset.complete = String(completed === total);
+        document.querySelector('#finish-icon').textContent = completed === total ? '✓' : '◇';
+        document.querySelector('#finish-title').textContent = completed === total ? 'Missão concluída!' : 'Sua missão está em andamento';
+        document.querySelector('#finish-text').textContent = completed === total ? 'Todos os testes foram marcados. Mostre seu painel em funcionamento ao professor!' : 'Conclua todas as etapas e demonstre o circuito para finalizar o desafio.';
+      }
+      tasks.forEach(input => input.addEventListener('change', () => {
+        saved[input.dataset.task] = input.checked;
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(saved)); } catch (_) {}
+        update();
+      }));
+      document.querySelector('#reset-btn').addEventListener('click', () => {
+        if (!confirm('Deseja apagar todas as marcações desta atividade?')) return;
+        tasks.forEach(input => { input.checked = false; });
+        saved = {};
+        try { localStorage.removeItem(STORAGE_KEY); } catch (_) {}
+        update();
+      });
+      document.querySelector('#print-btn').addEventListener('click', () => window.print());
+      update();
+      const pressed = new Set();
+      const pointers = new Map();
+      function renderDemo() {
+        document.querySelector('#led-g').classList.toggle('on', pressed.has('b1'));
+        document.querySelector('#led-b').classList.toggle('on', pressed.has('b2'));
+        document.querySelector('#led-r').classList.toggle('on', pressed.has('b3') && pressed.has('b4'));
+        document.querySelectorAll('[data-demo]').forEach(btn => {
+          const down = pressed.has(btn.dataset.demo);
+          btn.classList.toggle('pressed', down);
+          btn.setAttribute('aria-pressed', String(down));
+        });
+      }
+      document.querySelectorAll('[data-demo]').forEach(btn => {
+        const name = btn.dataset.demo;
+        btn.setAttribute('aria-pressed','false');
+        btn.addEventListener('pointerdown', e => {
+          if (e.pointerType === 'mouse' && e.button !== 0) return;
+          e.preventDefault();
+          btn.setPointerCapture(e.pointerId);
+          pointers.set(e.pointerId,name);
+          pressed.add(name);
+          renderDemo();
+        });
+        function release(e) {
+          if (pointers.get(e.pointerId) !== name) return;
+          pointers.delete(e.pointerId);
+          pressed.delete(name);
+          renderDemo();
+        }
+        btn.addEventListener('pointerup', release);
+        btn.addEventListener('pointercancel', release);
+        btn.addEventListener('lostpointercapture', release);
+        btn.addEventListener('keydown', e => {
+          if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) {
+            e.preventDefault(); pressed.add(name); renderDemo();
+          }
+        });
+        btn.addEventListener('keyup', e => {
+          if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); pressed.delete(name); renderDemo(); }
+        });
+        btn.addEventListener('blur', () => { if (!Array.from(pointers.values()).includes(name)) {pressed.delete(name);renderDemo();} });
+      });
+      window.addEventListener('blur', () => { pointers.clear(); pressed.clear(); renderDemo(); });
+    })();
+  </script>
+</body>
+</html>
